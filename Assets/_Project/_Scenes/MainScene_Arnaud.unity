@@ -293,7 +293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7bbb100202db164684a34b95d045796, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_doorPrefab: {fileID: 9038319222324475037, guid: 0c4d99525692c8b4abebcc775f202d5e,
+  m_doorPrefab: {fileID: 4776565135148979563, guid: a075b457307b1c849b6f4bd4c4ee9e30,
     type: 3}
   m_speed: 10
 --- !u!4 &604505362
