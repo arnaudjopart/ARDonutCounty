@@ -17,7 +17,7 @@ public class DestroyFallenObject : MonoBehaviour
         Debug.Log("Collision");
         Destroy(other.gameObject);
             m_hole = gameObject.transform.root;
-            m_hole.DOScale(m_hole.localScale * 2f, 0.2f);
+            m_hole.DOScale(m_hole.localScale * 1.2f, 0.2f);
     }
 }
 }

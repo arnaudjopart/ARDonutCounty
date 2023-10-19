@@ -44,8 +44,10 @@ public class UserInputManager : MonoBehaviour
                     }
                     else
                     {
-                        float distance = Vector3.Distance(m_hole.transform.position, positionOfHit);
-                        m_hole.transform.DOMove(positionOfHit, m_speed * distance);
+
+                        Instantiate(m_cubePrefab, positionOfHit + Vector3.up * .8f, Quaternion.identity);
+                        //float distance = Vector3.Distance(m_hole.transform.position, positionOfHit);
+                        //m_hole.transform.DOMove(positionOfHit, m_speed * distance);
                     }
 
 
