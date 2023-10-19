@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace NJ
 {
@@ -94,10 +95,13 @@ namespace NJ
 
         private bool IsWithinBounds(Vector3 position)
         {
-Debug.Log("IsWithinBounds pos:" + position);
+            Debug.Log("IsWithinBounds pos:" + position);
             return position.x >= minXBound && position.x <= maxXBound && position.y >= minYBound && position.y <= maxYBound;
         }
-        void Update()
+        private bool IsUIElementClicked() {
+            return EventSystem.current.IsPointerOverGameObject();
+        }
+    void Update()
         {
             //move the hole with Joystick
             if (m_joystickPrefab.isActiveAndEnabled) {
@@ -117,7 +121,7 @@ Debug.Log("IsWithinBounds pos:" + position);
                 }
             }
 
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && !IsUIElementClicked())
             {
 #if UNITY_EDITOR
                 positionMouseTouch = Input.mousePosition;
