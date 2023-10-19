@@ -3066,7 +3066,7 @@ PrefabInstance:
     - target: {fileID: 9038319222324475037, guid: 0c4d99525692c8b4abebcc775f202d5e,
         type: 3}
       propertyPath: m_Name
-      value: Iris Door Variant Variant
+      value: Iris Door - Definitive Edition
       objectReference: {fileID: 0}
     - target: {fileID: 9211389214315882423, guid: 0c4d99525692c8b4abebcc775f202d5e,
         type: 3}
@@ -3164,3 +3164,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54913b9adbfbc75478091859467d32f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_sizeModifier: {fileID: 0}
