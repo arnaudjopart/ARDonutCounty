@@ -57,4 +57,18 @@ public class UserInputManager : MonoBehaviour
             }
         }
     }
+
+    public void GenerateCubeAtViewPortPosition()
+    {
+        var position = Camera.main.ViewportToScreenPoint(new Vector2(.5f, .5f));
+
+        var listOfHits = new List<ARRaycastHit>();
+        if (m_raycastManager.Raycast(position, listOfHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
+        {
+            var hit = listOfHits[0];
+            var positionOfHit = hit.pose.position;
+            Instantiate(m_cubeDebugPrefab, positionOfHit + Vector3.up * .8f, Quaternion.identity);
+
+        }
+    }
 }
