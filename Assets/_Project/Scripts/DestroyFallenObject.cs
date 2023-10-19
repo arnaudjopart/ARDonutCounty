@@ -17,6 +17,7 @@ public class DestroyFallenObject : MonoBehaviour
         Debug.Log("Collision");
         Destroy(other.gameObject);
             m_hole = gameObject.transform.root;
+            DG.Tweening.Sequence mySequence = DOTween.Sequence();
             m_hole.DOScale(m_hole.localScale * 1.2f, 0.2f);
     }
 }

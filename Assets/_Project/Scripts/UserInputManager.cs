@@ -13,7 +13,7 @@ public class UserInputManager : MonoBehaviour
     [SerializeField] private GameObject m_holePrefab, m_cubePrefab;
     private string m_name;
     GameObject m_hole;
-    [SerializeField] float m_speed;
+    //[SerializeField] float m_speed;
 
     // Start is called before the first frame update
     void Start()
@@ -41,42 +41,20 @@ public class UserInputManager : MonoBehaviour
                     if (m_hole == null)
                     {
                         m_hole = Instantiate(m_holePrefab, positionOfHit, Quaternion.identity);
+                        GetComponent<SwipeController>().enabled = true;
                     }
-                    else
-                    {
+                    //else
+                    //{
 
-                        Instantiate(m_cubePrefab, positionOfHit + Vector3.up * .8f, Quaternion.identity);
-                        //float distance = Vector3.Distance(m_hole.transform.position, positionOfHit);
-                        //m_hole.transform.DOMove(positionOfHit, m_speed * distance);
-                    }
+                    //    Instantiate(m_cubePrefab, positionOfHit + Vector3.up * .8f, Quaternion.identity);
+
+                    //}
 
 
                 }
             }
 
-            if (Input.GetMouseButtonDown(1))
-            {
-                var position = new Vector2();
-#if UNITY_EDITOR
-                position = Input.mousePosition;
-#else
-            position = Input.GetTouch(0).position;
-#endif
 
-                var listOfHits = new List<ARRaycastHit>();
-                if (m_raycastManager.Raycast(position, listOfHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
-                {
-                    var hit = listOfHits[0];
-                    var positionOfHit = hit.pose.position;
-                    {
-                       Instantiate(m_cubePrefab, positionOfHit+Vector3.up*.8f, Quaternion.identity);
-
-
-
-
-                    }
-                }
-            }
         }
 
     private string ReturnGameObjectName(GameObject _gameObject)

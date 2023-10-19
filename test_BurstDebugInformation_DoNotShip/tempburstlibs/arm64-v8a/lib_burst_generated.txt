@@ -3,60 +3,6 @@ Library: C:\Users\s_dummy\Documents\GitHub\ARDonutCounty\Temp\BurstOutput\tempbu
 --backend=burst-llvm-15
 --target=ARMV8A_AARCH64
 --global-safety-checks-setting=Off
---disable-safety-checks
---meta-data-generation=False
---dump=Function
---float-precision=Standard
---target-framework=NetFramework
---float-mode=Fast
---assembly-defines=Assembly-CSharp-firstpass;
---assembly-defines=Assembly-CSharp;
---assembly-defines=DOTween;
---assembly-defines=IngameDebugConsole.Runtime;
---assembly-defines=Mono.Security;
---assembly-defines=mscorlib;
---assembly-defines=System.Configuration;
---assembly-defines=System.Core;
---assembly-defines=System;
---assembly-defines=System.Xml;
---assembly-defines=Unity.Burst;
---assembly-defines=Unity.InputSystem;
---assembly-defines=Unity.Mathematics;
---assembly-defines=Unity.RenderPipeline.Universal.ShaderLibrary;
---assembly-defines=Unity.RenderPipelines.Core.Runtime;
---assembly-defines=Unity.RenderPipelines.Universal.Runtime;
---assembly-defines=Unity.VisualScripting.Core;
---assembly-defines=Unity.VisualScripting.Flow;
---assembly-defines=Unity.XR.ARCore;
---assembly-defines=Unity.XR.ARFoundation;
---assembly-defines=Unity.XR.ARFoundation.InternalUtils;
---assembly-defines=Unity.XR.ARFoundation.VisualScripting;
---assembly-defines=Unity.XR.ARSubsystems;
---assembly-defines=Unity.XR.CoreUtils;
---assembly-defines=Unity.XR.Interaction.Toolkit;
---assembly-defines=Unity.XR.InteractionSubsystems;
---assembly-defines=Unity.XR.Management;
---assembly-defines=Unity.XR.OpenXR;
---assembly-defines=Unity.XR.OpenXR.Features.ConformanceAutomation;
---assembly-defines=Unity.XR.OpenXR.Features.MetaQuestSupport;
---assembly-defines=Unity.XR.OpenXR.Features.MockRuntime;
---assembly-defines=Unity.XR.OpenXR.Features.OculusQuestSupport;
---assembly-defines=Unity.XR.OpenXR.Features.RuntimeDebugger;
---assembly-defines=UnityEngine;
---generate-link-xml=Temp\burst.link.xml
---temp-folder=C:\Users\s_dummy\Documents\GitHub\ARDonutCounty\Temp\Burst
---key-folder=C:/Program Files/Unity/Hub/Editor/2022.3.9f1/Editor/Data/PlaybackEngines/AndroidPlayer
---decode-folder=C:\Users\s_dummy\Documents\GitHub\ARDonutCounty\Library\Burst
---output=C:\Users\s_dummy\Documents\GitHub\ARDonutCounty\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_generated
---pdb-search-paths=Temp/ManagedSymbols/
-
---method=Unity.Jobs.IJobForExtensions+ForJobStruct`1[[UnityEngine.Rendering.Universal.ZBinningJob, Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(UnityEngine.Rendering.Universal.ZBinningJob&, Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)--77fc393cb521ac129b1392d4eb94d29a
---method=Unity.Jobs.IJobForExtensions+ForJobStruct`1[[UnityEngine.Rendering.Universal.TileRangeExpansionJob, Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(UnityEngine.Rendering.Universal.TileRangeExpansionJob&, Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)--adceb2156d08d59afc9749dc2521fd2b
---method=Unity.Jobs.IJobForExtensions+ForJobStruct`1[[UnityEngine.Rendering.Universal.TilingJob, Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(UnityEngine.Rendering.Universal.TilingJob&, Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)--a6f5259e22ed809ef3937424c4bd686d
---platform=Android
---backend=burst-llvm-15
---target=ARMV8A_AARCH64
---global-safety-checks-setting=Off
 --meta-data-generation=False
 --dump=Function
 --float-precision=Standard
@@ -74,6 +20,9 @@ Library: C:\Users\s_dummy\Documents\GitHub\ARDonutCounty\Temp\BurstOutput\tempbu
 --assembly-defines=Unity.Burst;
 --assembly-defines=Unity.InputSystem;
 --assembly-defines=Unity.Mathematics;
+--assembly-defines=Unity.ProBuilder;
+--assembly-defines=Unity.ProBuilder.KdTree;
+--assembly-defines=Unity.ProBuilder.Poly2Tri;
 --assembly-defines=Unity.RenderPipeline.Universal.ShaderLibrary;
 --assembly-defines=Unity.RenderPipelines.Core.Runtime;
 --assembly-defines=Unity.RenderPipelines.Universal.Runtime;
@@ -158,4 +107,61 @@ Library: C:\Users\s_dummy\Documents\GitHub\ARDonutCounty\Temp\BurstOutput\tempbu
 --method=UnityEngine.XR.Interaction.Toolkit.Inputs.XRTransformStabilizer, Unity.XR.Interaction.Toolkit, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::CalculateRotationParams(Unity.Mathematics.float3&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Unity.Mathematics.float3&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Unity.Mathematics.float3&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Unity.Mathematics.float3&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Unity.Mathematics.float3&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Mathematics.quaternion&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|System.Single&, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.Single&, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)--e9df46149c75cbf1185bdaa5e4cf8cb3
 --method=UnityEngine.XR.Interaction.Toolkit.Utilities.BurstMathUtility, Unity.XR.Interaction.Toolkit, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Angle(Unity.Mathematics.quaternion&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Unity.Mathematics.quaternion&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|System.Single&, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)--9972d5c311b51ff2ddfb7a6a287dfd91
 --method=UnityEngine.XR.Interaction.Toolkit.Transformers.XRSocketGrabTransformer, Unity.XR.Interaction.Toolkit, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::FastComputeNewTrackedPose(Unity.Mathematics.float3&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Unity.Mathematics.quaternion&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Unity.Mathematics.float3&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Unity.Mathematics.quaternion&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Unity.Mathematics.quaternion&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Unity.Mathematics.float3&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Unity.Mathematics.quaternion&, Unity.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null)--d25cb729a424e7fa5ef9105d2c698524
+--platform=Android
+--backend=burst-llvm-15
+--target=ARMV8A_AARCH64
+--global-safety-checks-setting=Off
+--disable-safety-checks
+--meta-data-generation=False
+--dump=Function
+--float-precision=Standard
+--target-framework=NetFramework
+--float-mode=Fast
+--assembly-defines=Assembly-CSharp-firstpass;
+--assembly-defines=Assembly-CSharp;
+--assembly-defines=DOTween;
+--assembly-defines=IngameDebugConsole.Runtime;
+--assembly-defines=Mono.Security;
+--assembly-defines=mscorlib;
+--assembly-defines=System.Configuration;
+--assembly-defines=System.Core;
+--assembly-defines=System;
+--assembly-defines=System.Xml;
+--assembly-defines=Unity.Burst;
+--assembly-defines=Unity.InputSystem;
+--assembly-defines=Unity.Mathematics;
+--assembly-defines=Unity.ProBuilder;
+--assembly-defines=Unity.ProBuilder.KdTree;
+--assembly-defines=Unity.ProBuilder.Poly2Tri;
+--assembly-defines=Unity.RenderPipeline.Universal.ShaderLibrary;
+--assembly-defines=Unity.RenderPipelines.Core.Runtime;
+--assembly-defines=Unity.RenderPipelines.Universal.Runtime;
+--assembly-defines=Unity.VisualScripting.Core;
+--assembly-defines=Unity.VisualScripting.Flow;
+--assembly-defines=Unity.XR.ARCore;
+--assembly-defines=Unity.XR.ARFoundation;
+--assembly-defines=Unity.XR.ARFoundation.InternalUtils;
+--assembly-defines=Unity.XR.ARFoundation.VisualScripting;
+--assembly-defines=Unity.XR.ARSubsystems;
+--assembly-defines=Unity.XR.CoreUtils;
+--assembly-defines=Unity.XR.Interaction.Toolkit;
+--assembly-defines=Unity.XR.InteractionSubsystems;
+--assembly-defines=Unity.XR.Management;
+--assembly-defines=Unity.XR.OpenXR;
+--assembly-defines=Unity.XR.OpenXR.Features.ConformanceAutomation;
+--assembly-defines=Unity.XR.OpenXR.Features.MetaQuestSupport;
+--assembly-defines=Unity.XR.OpenXR.Features.MockRuntime;
+--assembly-defines=Unity.XR.OpenXR.Features.OculusQuestSupport;
+--assembly-defines=Unity.XR.OpenXR.Features.RuntimeDebugger;
+--assembly-defines=UnityEngine;
+--generate-link-xml=Temp\burst.link.xml
+--temp-folder=C:\Users\s_dummy\Documents\GitHub\ARDonutCounty\Temp\Burst
+--key-folder=C:/Program Files/Unity/Hub/Editor/2022.3.9f1/Editor/Data/PlaybackEngines/AndroidPlayer
+--decode-folder=C:\Users\s_dummy\Documents\GitHub\ARDonutCounty\Library\Burst
+--output=C:\Users\s_dummy\Documents\GitHub\ARDonutCounty\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_generated
+--pdb-search-paths=Temp/ManagedSymbols/
+
+--method=Unity.Jobs.IJobForExtensions+ForJobStruct`1[[UnityEngine.Rendering.Universal.ZBinningJob, Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(UnityEngine.Rendering.Universal.ZBinningJob&, Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)--77fc393cb521ac129b1392d4eb94d29a
+--method=Unity.Jobs.IJobForExtensions+ForJobStruct`1[[UnityEngine.Rendering.Universal.TileRangeExpansionJob, Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(UnityEngine.Rendering.Universal.TileRangeExpansionJob&, Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)--adceb2156d08d59afc9749dc2521fd2b
+--method=Unity.Jobs.IJobForExtensions+ForJobStruct`1[[UnityEngine.Rendering.Universal.TilingJob, Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(UnityEngine.Rendering.Universal.TilingJob&, Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)--a6f5259e22ed809ef3937424c4bd686d
 
