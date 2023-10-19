@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3436881045457367173}
   - component: {fileID: 5707727188019891858}
   - component: {fileID: -1710150615322492204}
+  - component: {fileID: -2956077239683849414}
   m_Layer: 0
   m_Name: CubePauline
   m_TagString: Untagged
@@ -133,3 +134,15 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &-2956077239683849414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5975151441332362043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f41609101f7bbf249a98226f2a154e30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using DG.Tweening;
+using UnityEngine.EventSystems;
 
 namespace pauline.gossart
 {
@@ -13,21 +14,28 @@ namespace pauline.gossart
         [SerializeField] private GameObject m_cubePrefab;
         [SerializeField] private float duration;
         [SerializeField] private float cubeDropDistance = .5f;
+        [SerializeField] private Joystick m_joystick;
         private string m_name;
         private GameObject m_hole;
+        private Camera m_camera;
 
 
         // Start is called before the first frame update
         void Start()
         {
-
+            m_camera = Camera.main;
         }
 
+       
         // Update is called once per frame
         void Update()
         {
             if (Input.GetMouseButtonDown(0))
             {
+
+                if (IsClickingOnUIElement()) return;
+
+
                 Vector2 position = new Vector2();
 #if UNITY_EDITOR
                 position = Input.mousePosition;
@@ -46,16 +54,52 @@ namespace pauline.gossart
                     {
                         m_hole = Instantiate(m_holePrefab, positionOfHit, Quaternion.identity);
                     }
+                    /* else
+                     {
+                         float distance = Vector3.Distance(m_hole.transform.position, positionOfHit);
+                         //m_hole.transform.position = positionOfHit;
+                         m_hole.transform.DOMove(positionOfHit, duration * distance).SetEase(Ease.InOutSine);
+                     }
+                    */
                     else
                     {
-                        float distance = Vector3.Distance(m_hole.transform.position, positionOfHit);
-                        //m_hole.transform.position = positionOfHit;
-                        m_hole.transform.DOMove(positionOfHit, duration * distance).SetEase(Ease.InOutSine);
+                        Instantiate(m_cubePrefab, positionOfHit + Vector3.up * cubeDropDistance, Quaternion.identity);
                     }
                 }
             }
 
-            if (Input.GetMouseButtonDown(1))
+
+
+            if (m_hole != null)
+            {
+                //Player Input
+                float playerHorizontalInput = m_joystick.Horizontal;
+                float playerVerticalInput = m_joystick.Vertical;
+
+                //Camera normalized directional vectors
+                Vector3 right = m_camera.transform.right;
+                Vector3 forward = m_camera.transform.forward;
+
+                forward.y = 0;
+                right.y = 0;
+                forward = forward.normalized;
+                right = right.normalized;
+
+                //Creating directional relative input 
+                Vector3 forwardRelativeHorizontalInput = playerHorizontalInput * right;
+                Vector3 rightRelativeVerticalInput = playerVerticalInput * forward;
+
+                //Apply camera relative movement
+                Vector3 cameraRelativeMovement = forwardRelativeHorizontalInput + rightRelativeVerticalInput;
+
+                m_hole.transform.Translate(cameraRelativeMovement * Time.deltaTime, Space.World);
+
+
+                //m_hole.transform.Translate((playerHorizontalInput * Time.deltaTime), 0, (playerVerticalInput * Time.deltaTime));
+
+            }
+
+            /*if (Input.GetMouseButtonDown(1))
             {
                 Vector2 position = new Vector2();
                 position = Input.mousePosition;
@@ -69,7 +113,7 @@ namespace pauline.gossart
                     
                     Instantiate(m_cubePrefab, positionOfHits + Vector3.up * cubeDropDistance, Quaternion.identity);
                 }
-            }
+            }*/
 
         }
 
@@ -82,6 +126,11 @@ namespace pauline.gossart
         private bool IsActive()
         {
             return gameObject.activeSelf;
+        }
+
+        private bool IsClickingOnUIElement()
+        {
+            return EventSystem.current.IsPointerOverGameObject();
         }
     }
 }
