@@ -1,10 +1,4 @@
-using DG.Tweening;
-using System;
-using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.XR.ARFoundation;
 
 namespace NJ
 {
@@ -16,22 +10,29 @@ namespace NJ
         private const float RAY_CAST_MAX_DISTANCE = 40f;
         private const int FALL_Y_DESTROY = -4;
 
-        public GameObject m_holePrefab; // Prefab du trou
-        public GameObject m_ballPrefab; // Prefab de la bille
+        public GameObject m_holePrefab;
+        public GameObject m_ballPrefab;
+        //public GameObject m_joystickPrefab; // hole controller
+        public Joystick m_joystickPrefab;
+        public Vector3 m_holeSpeedMove;
         public float m_ballForce = 5.0f; // Force pour tirer la bille
+
+        public float minXBound, maxXBound, minYBound, maxYBound;
 
         private GameObject m_currentHole; // Hole actuelle
         private GameObject m_currentBall; // Ball actuelle
 
         Vector2 positionMouseTouch;
-        Vector3 mousePosition;
+        Vector3 position;
         Ray rayMouseTouch;
         Vector3 ballPosition;
         Vector3 direction;
         Rigidbody rb;
+        Vector2 joystickInput;
 
         private void Start()
         {
+            m_joystickPrefab.gameObject.SetActive(false);
             BallEnter.OnBallEnterHole += BallEnterHole;
             BallEnter.OnBallExitHole += BallExitHole;
         }
@@ -77,8 +78,31 @@ namespace NJ
             }
         }
 
+        private bool IsWithinBounds(Vector3 position)
+        {
+Debug.Log("IsWithinBounds pos:" + position);
+            return position.x >= minXBound && position.x <= maxXBound && position.y >= minYBound && position.y <= maxYBound;
+        }
         void Update()
         {
+            //move the hole with Joystick
+            float minX = -5.0f; // Minimum X coordinate for the screen
+            float maxX = 5.0f;  // Maximum X coordinate for the screen
+            float minY = -3.0f; // Minimum Y coordinate for the screen
+            float maxY = 3.0f;  // Maximum Y coordinate for the screen
+
+            joystickInput = new Vector2(m_joystickPrefab.Horizontal, m_joystickPrefab.Vertical);
+            if (joystickInput.magnitude > 0.1f)
+            {
+                direction = new Vector3(joystickInput.x, 0, joystickInput.y);
+                position = m_currentHole.transform.position + direction * Time.deltaTime * 1;
+
+                position.x = Mathf.Clamp(position.x, minX, maxX);
+                position.y = Mathf.Clamp(position.y, minY, maxY);
+
+                m_currentHole.transform.position = position;
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
 #if UNITY_EDITOR
@@ -97,6 +121,7 @@ Debug.Log("Hole");
                         //if (hit.transform.CompareTag("Ground"))
                         {
                             m_currentHole = Instantiate(m_holePrefab, hit.point, Quaternion.identity);
+                            m_joystickPrefab.gameObject.SetActive(true);
                         }
                     }
                 }
@@ -109,7 +134,7 @@ Debug.Log("Hole");
                         {
                             m_currentBall = Instantiate(m_ballPrefab, hit.point, Quaternion.identity);
                         }
-Debug.Log("Ball layer:" + m_currentBall.layer.ToString());
+Debug.Log("Ball layer:" + m_currentBall.layer);
                     }
                 }
                 else if (m_currentHole != null && m_currentBall != null && positionMouseTouch != null)
@@ -117,9 +142,9 @@ Debug.Log("Ball layer:" + m_currentBall.layer.ToString());
                     if (Physics.Raycast(rayMouseTouch, out RaycastHit hit, RAY_CAST_MAX_DISTANCE) && hit.collider.CompareTag("Player"))
                     {
 Debug.Log("Clic on current ball");
-                        mousePosition = hit.point;
+                        position = hit.point;
                         ballPosition = m_currentBall.transform.position;
-                        direction = (ballPosition - mousePosition).normalized;
+                        direction = (ballPosition - position).normalized;
 
                         rb = m_currentBall.GetComponent<Rigidbody>();
                         if (rb != null)
@@ -129,7 +154,9 @@ Debug.Log("Clic on current ball");
                     }
                 }
             }
-            if (m_currentBall != null && m_currentBall.transform.position.y < FALL_Y_DESTROY) //ball fall, retry
+
+            //ball fall, retry
+            if (m_currentBall != null && m_currentBall.transform.position.y < FALL_Y_DESTROY)
                 Destroy(m_currentBall);
         }
     }
