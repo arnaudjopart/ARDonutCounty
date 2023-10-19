@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -18,20 +19,16 @@ namespace Thomas
         private ARPlane m_doorPlane;
         [SerializeField] private float m_doorMoveSpeed;
         [SerializeField] GameObject m_cubePrefab;
-        private int m_nbrCubes;
+        [SerializeField] private Count m_nbrCubes;
 
-        private void Start()
+        public void Start()
         {
-
-        }
-
-        private void Update()
-        {
-            
+            m_nbrCubes.count = 0;
         }
 
         public override void ProcessTouchDown(Vector2 _touchPosition)
         {
+            if (IsClickingOnUIElement()) return;
             if (m_door == null)
             {
                 List<ARRaycastHit> listOfHits = new();
@@ -47,6 +44,7 @@ namespace Thomas
 
         public override void ProcessTouch(Vector2 _touchPosition)
         {
+            if (IsClickingOnUIElement()) return;
             if (m_door != null)
             {
                 List<ARRaycastHit> listOfHits = new();
@@ -54,7 +52,6 @@ namespace Thomas
                 {
                     ARRaycastHit hit = listOfHits[0];
                     Vector3 moveDirection = new(hit.pose.position.x - m_door.transform.position.x, 0, hit.pose.position.z - m_door.transform.position.z);
-                    //Debug.Log(moveDirection.ToString());
                     if (moveDirection.magnitude < m_doorMoveSpeed * Time.deltaTime)
                         m_door.transform.Translate(moveDirection);
                     else
@@ -68,26 +65,45 @@ namespace Thomas
 
         public void SpawnCubes(int _expectedCubesNbr)
         {
-            if (m_door != null && m_nbrCubes < _expectedCubesNbr)
+            if (m_door != null && m_nbrCubes.count < _expectedCubesNbr)
             {
                 Unity.Mathematics.Random rand = new(((uint)Time.time));
-                float distanceMax = 0.1f;
-                while(m_nbrCubes < _expectedCubesNbr)
+                float distanceMin = 0.3f;
+                float distanceMax = 1;
+                int tries = 0;
+                while(m_nbrCubes.count < _expectedCubesNbr)
                 {
-                    float distanceX = rand.NextFloat(-distanceMax, distanceMax);
-                    float distanceZ = rand.NextFloat(-distanceMax, distanceMax);
-                    Vector3 origin = new(m_door.transform.position.x - distanceX, 0, m_door.transform.position.z - distanceZ);
-                    if (Physics.Raycast(origin, m_doorPlane.normal, out RaycastHit hit) && hit.collider.TryGetComponent(out ARPlane foundPlane))
+                    float distanceX = rand.NextFloat(distanceMin, distanceMax);
+                    int exposant = rand.NextInt(0, 2);
+                    if (exposant == 1)
+                        distanceX = -distanceX;
+                    float distanceZ = rand.NextFloat(distanceMin, distanceMax);
+                    exposant = rand.NextInt(0, 2);
+                    if (exposant == 1)
+                        distanceZ = -distanceZ;
+                    Vector3 origin = new(m_door.transform.position.x - distanceX, m_doorPlane.center.y + 1, m_door.transform.position.z - distanceZ);
+                    if (Physics.Raycast(origin, -m_doorPlane.normal, out RaycastHit hit))
                     {
-                        if(foundPlane.trackableId == m_doorPlane.trackableId)
+                        if (hit.collider.TryGetComponent(out ARPlane foundPlane) && foundPlane.trackableId == m_doorPlane.trackableId)
                         {
-                            Vector3 cubePosition = hit.point + m_doorPlane.normal;
-                            Instantiate(m_cubePrefab, origin, Quaternion.Euler(0, 0, 0));
-                            m_nbrCubes++;
+                                Vector3 cubePosition = hit.point + m_doorPlane.normal;
+                                Instantiate(m_cubePrefab, cubePosition, Quaternion.Euler(0, 0, 0));
+                                m_nbrCubes.count++;
                         }
+                    }
+                    tries++;
+                    if (tries == 100)
+                    {
+                        Debug.Log("Echec");
+                        break;
                     }
                 }
             }
+        }
+
+        private bool IsClickingOnUIElement()
+        {
+            return EventSystem.current.IsPointerOverGameObject();
         }
     }
 }
