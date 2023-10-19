@@ -8,7 +8,9 @@ public class UserInputManager : MonoBehaviour
     [SerializeField] private ARRaycastManager m_raycastManager;
     [SerializeField] private DoorController m_controller;
     [SerializeField] private GameObject m_cubeDebugPrefab;
-
+    [SerializeField] private GameObject m_holePrefab;
+    private string m_name;
+    private bool m_spawnBool = true; 
 
     // Start is called before the first frame update
     void Start()
@@ -29,12 +31,14 @@ public class UserInputManager : MonoBehaviour
 #endif
 
             var listOfHits = new List<ARRaycastHit>();
-            if (m_raycastManager.Raycast(position, listOfHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
+            if (m_raycastManager.Raycast(position, listOfHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon) && m_spawnBool)
             {
                 var hit = listOfHits[0];
                 var positionOfHit = hit.pose.position;
-                m_controller.ProcessTouch(positionOfHit);
+                //m_controller.ProcessTouch(positionOfHit);
                 
+                Instantiate(m_holePrefab, positionOfHit, Quaternion.identity);
+                m_spawnBool = false;
             }
         }
 

@@ -802,6 +802,8 @@ MonoBehaviour:
   - {fileID: 5516292433650505653}
   - {fileID: 2753372496546608503}
   - {fileID: 1295715215056142909}
+  m_raycastManager: {fileID: 0}
+  m_holePrefab: {fileID: 6271949037207399449}
 --- !u!4 &6647771305135961763 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1f949c5c9dea39b4896f33eef9786360,
