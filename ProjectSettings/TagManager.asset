@@ -17,8 +17,8 @@ TagManager:
   - insideHoleMask
   - HoleContent
   - HolePhysic
-  - 
-  - 
+  - HoleContentPhysic
+  - DefaultPhysic
   - 
   - 
   - 
