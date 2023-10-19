@@ -1,12 +1,15 @@
+using DG.Tweening;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace NJ
 {
+    //TODO visual effect ball disappear
     //TODO nb pt
     //TODO each point make your ball far from hole
     //TODO boucing wall
+    //TODO hole stay in plane
     public class BouncingBallGame : MonoBehaviour
     {
         private const float RAY_CAST_MAX_DISTANCE = 40f;
@@ -18,8 +21,9 @@ namespace NJ
         //public GameObject m_joystickPrefab; // hole controller
         public Joystick m_joystickPrefab;
         public float m_ballForce = 5.0f; // Force pour tirer la bille
+        public float AnimationBallInHoleDuration = 0.5f;
 
-        public float minXBound = 0, maxXBound = 1, minYBound = 0, maxYBound = 1;
+        private float minXBound = 0, maxXBound = 1, minYBound = 0, maxYBound = 1;
 
         private GameObject m_currentHole; // Hole actuelle
         private GameObject m_currentBall; // Ball actuelle
@@ -71,15 +75,15 @@ namespace NJ
                 rb = m_currentBall.GetComponent<Rigidbody>();
                 if (rb != null)
                 {
-                    rb.isKinematic = true;
-                    m_currentBall.layer = LayerMask.NameToLayer("HoleContent");
+                    //rb.isKinematic = true; rb.mass = 10f; //moche
+                    //m_currentBall.layer = LayerMask.NameToLayer("HoleContent");
+                    m_currentBall.transform.DOScale(Vector3.zero, AnimationBallInHoleDuration).OnComplete(() => { Destroy(m_currentBall, 1f); });
 
                     /*Vector3 targetPosition = new Vector3(0f, 2f, 0f);
                     m_currentBall.transform.DOScale(Vector3.zero, 1.2f).OnComplete(() =>
                     {
                         m_currentBall.transform.position = targetPosition;
                     });*/
-                    Destroy(m_currentBall);
                 }
             }
         }
