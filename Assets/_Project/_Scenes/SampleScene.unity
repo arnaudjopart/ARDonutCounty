@@ -740,6 +740,11 @@ MonoBehaviour:
   m_raycastManager: {fileID: 250758402}
   m_holePrefab: {fileID: 6271949037207399449, guid: b86b1d4aa8ce44040b5f47b4630f1582,
     type: 3}
+  m_cubePrefab: {fileID: 5975151441332362043, guid: 1a6abb7370bcb5847ba928ef23fce0fd,
+    type: 3}
+  m_bigCube: {fileID: 5500285704808336583, guid: 84151ad3e907b744cad55b6f2fd3f47b,
+    type: 3}
+  m_canSpawn: 1
 --- !u!4 &1609654953
 Transform:
   m_ObjectHideFlags: 0
