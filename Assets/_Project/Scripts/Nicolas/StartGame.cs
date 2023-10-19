@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace NJ
@@ -9,7 +10,7 @@ namespace NJ
     {
         private const float RAY_CAST_MAX_DISTANCE = 40f;
         private const int FALL_Y_DESTROY = -4;
-        private const float HOLE_SPEED_MOVEMENT = 1.6f;
+        private const float HOLE_SPEED_MOVEMENT = 1f;
 
         public GameObject m_holePrefab;
         public GameObject m_ballPrefab;
@@ -17,7 +18,7 @@ namespace NJ
         public Joystick m_joystickPrefab;
         public float m_ballForce = 5.0f; // Force pour tirer la bille
 
-        public float minXBound = -2, maxXBound = 2, minYBound = -2, maxYBound = 2;
+        public float minXBound = 0, maxXBound = 1, minYBound = 0, maxYBound = 1;
 
         private GameObject m_currentHole; // Hole actuelle
         private GameObject m_currentBall; // Ball actuelle
@@ -30,9 +31,25 @@ namespace NJ
         private void Start()
         {
             m_joystickPrefab.gameObject.SetActive(false);
+            //CalculAndSetBounds();
             BallEnter.OnBallEnterHole += BallEnterHole;
             BallEnter.OnBallExitHole += BallExitHole;
         }
+
+        /*private void CalculAndSetBounds()
+        {
+                float objectHalfWidth = yourObjectTransform.localScale.x / 2;
+                float objectHalfHeight = yourObjectTransform.localScale.y / 2;
+
+                Vector3 minScreenPoint = Camera.main.WorldToViewportPoint(new Vector3(-objectHalfWidth, -objectHalfHeight, 0));
+                Vector3 maxScreenPoint = Camera.main.WorldToViewportPoint(new Vector3(objectHalfWidth, objectHalfHeight, 0));
+
+                minXBound = minScreenPoint.x;
+                maxXBound = maxScreenPoint.x;
+                minYBound = minScreenPoint.y;
+                maxYBound = maxScreenPoint.y;
+        }*/
+
         private void OnDestroy()
         {
             BallEnter.OnBallEnterHole -= BallEnterHole;
@@ -85,7 +102,7 @@ Debug.Log("IsWithinBounds pos:" + position);
             //move the hole with Joystick
             if (m_joystickPrefab.isActiveAndEnabled) {
                 joystickInput = new Vector2(m_joystickPrefab.Horizontal, m_joystickPrefab.Vertical);
-                if (joystickInput.magnitude > 0.1f)
+                if (joystickInput.magnitude > 0.05f)
                 {
                     direction = new Vector3(joystickInput.x, 0, joystickInput.y);
                     cameraForward = Camera.main.transform.forward;
