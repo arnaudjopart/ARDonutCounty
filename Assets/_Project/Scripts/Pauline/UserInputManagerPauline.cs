@@ -12,6 +12,7 @@ namespace pauline.gossart
         [SerializeField] private GameObject m_holePrefab;
         [SerializeField] private GameObject m_cubePrefab;
         [SerializeField] private float duration;
+        [SerializeField] private float cubeDropDistance = .5f;
         private string m_name;
         private GameObject m_hole;
 
@@ -66,7 +67,7 @@ namespace pauline.gossart
                     ARRaycastHit hit = listOfHits[0];
                     Vector3 positionOfHits = hit.pose.position;
                     
-                    Instantiate(m_cubePrefab, positionOfHits, Quaternion.identity);
+                    Instantiate(m_cubePrefab, positionOfHits + Vector3.up * cubeDropDistance, Quaternion.identity);
                 }
             }
 
