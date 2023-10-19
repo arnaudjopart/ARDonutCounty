@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.XR.ARFoundation;
 
 public class UserInputManager : MonoBehaviour
@@ -41,13 +43,13 @@ public class UserInputManager : MonoBehaviour
             
         } 
         
-        if (Input.GetMouseButtonDown(1))
+        /*if (Input.GetMouseButtonDown(1))
         {
             var position = new Vector2();
 #if UNITY_EDITOR
             position = Input.mousePosition;
 #else
-            position = Input.GetTouch(0).position;
+            position = Input.GetTouch(1).position;
 #endif
 
             var listOfHits = new List<ARRaycastHit>();
@@ -57,15 +59,15 @@ public class UserInputManager : MonoBehaviour
                 var positionOfHit = hit.pose.position;
                 Instantiate(m_cubePrefab, positionOfHit + new Vector3(0,0.1f,0), Quaternion.identity);
             }
-        }
+        }*/
 
-        if (Input.GetMouseButtonDown(2))
+        if (Input.GetMouseButtonDown(2) || Input.touchCount == 2)
         {
             var position = new Vector2();
 #if UNITY_EDITOR
             position = Input.mousePosition;
 #else
-            position = Input.GetTouch(0).position;
+            position = Input.GetTouch(1).position;
 #endif
 
             var listOfHits = new List<ARRaycastHit>();
@@ -76,7 +78,35 @@ public class UserInputManager : MonoBehaviour
                 Instantiate(m_bigCube, positionOfHit + new Vector3(0, 1f, 0), Quaternion.identity);
             }
         }
+        
     }
+    float lastTimeClick;
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        float currentTimeClick = eventData.clickTime;
+
+        if (Mathf.Abs(currentTimeClick - lastTimeClick) < 0.75f)
+        {
+            var position = new Vector2();
+#if UNITY_EDITOR
+            position = Input.mousePosition;
+#else
+            position = Input.GetTouch(1).position;
+#endif
+
+            var listOfHits = new List<ARRaycastHit>();
+            if (m_raycastManager.Raycast(position, listOfHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
+            {
+                var hit = listOfHits[0];
+                var positionOfHit = hit.pose.position;
+                Instantiate(m_cubePrefab, positionOfHit + new Vector3(0, 0.1f, 0), Quaternion.identity);
+            }
+        }
+
+        lastTimeClick = currentTimeClick;
+    }
+
 
     private string ReturnGameObjectName(GameObject _gameObject)
     {

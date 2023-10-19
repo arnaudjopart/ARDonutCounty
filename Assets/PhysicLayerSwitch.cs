@@ -16,7 +16,7 @@ public class PhysicLayerSwitch : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        other.gameObject.layer = LayerMask.NameToLayer("HoleContent");
+        //other.gameObject.layer = LayerMask.NameToLayer("HoleContent");
 
     }
 
