@@ -6,8 +6,9 @@ using UnityEngine.XR.ARFoundation;
 public class UserInputManager : MonoBehaviour
 {
     [SerializeField] private ARRaycastManager m_raycastManager;
-    [SerializeField] private GameObject m_holePrefab;
-    private string m_name;
+    [SerializeField] private DoorController m_controller;
+    [SerializeField] private GameObject m_cubeDebugPrefab;
+
 
     // Start is called before the first frame update
     void Start()
@@ -32,19 +33,28 @@ public class UserInputManager : MonoBehaviour
             {
                 var hit = listOfHits[0];
                 var positionOfHit = hit.pose.position;
-                Instantiate(m_holePrefab, positionOfHit, Quaternion.identity);
+                m_controller.ProcessTouch(positionOfHit);
+                
             }
-        }  
-    }
+        }
 
-    private string ReturnGameObjectName(GameObject _gameObject)
-    {
-        m_name = _gameObject.name;
-        return m_name;
-    }
+        if (Input.GetMouseButtonDown(1))
+        {
+            var position = new Vector2();
+#if UNITY_EDITOR
+            position = Input.mousePosition;
+#else
+            position = Input.GetTouch(0).position;
+#endif
 
-    private bool IsActive()
-    {
-        return gameObject.activeSelf;
+            var listOfHits = new List<ARRaycastHit>();
+            if (m_raycastManager.Raycast(position, listOfHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
+            {
+                var hit = listOfHits[0];
+                var positionOfHit = hit.pose.position;
+                Instantiate(m_cubeDebugPrefab, positionOfHit + Vector3.up * .8f, Quaternion.identity);
+
+            }
+        }
     }
 }
