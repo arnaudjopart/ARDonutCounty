@@ -17,6 +17,8 @@ namespace Thomas
         private GameObject m_door;
         private ARPlane m_doorPlane;
         [SerializeField] private float m_doorMoveSpeed;
+        [SerializeField] GameObject m_cubePrefab;
+        private int m_nbrCubes;
 
         private void Start()
         {
@@ -33,7 +35,7 @@ namespace Thomas
             if (m_door == null)
             {
                 List<ARRaycastHit> listOfHits = new();
-                if (m_raycastManager.Raycast(_touchPosition, listOfHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon) && m_planeManager.GetPlane(listOfHits[0].trackableId).alignment.IsHorizontal())
+                if (m_raycastManager.Raycast(_touchPosition, listOfHits, TrackableType.PlaneWithinPolygon) && m_planeManager.GetPlane(listOfHits[0].trackableId).alignment.IsHorizontal())
                 {
                     ARRaycastHit hit = listOfHits[0];
                     m_doorPlane = m_planeManager.GetPlane(hit.trackableId);
@@ -48,34 +50,44 @@ namespace Thomas
             if (m_door != null)
             {
                 List<ARRaycastHit> listOfHits = new();
-                if (m_raycastManager.Raycast(_touchPosition, listOfHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
+                if (m_raycastManager.Raycast(_touchPosition, listOfHits, TrackableType.PlaneWithinPolygon))
                 {
-                    for (int i = 0; i < listOfHits.Count; i++)
+                    ARRaycastHit hit = listOfHits[0];
+                    Vector3 moveDirection = new(hit.pose.position.x - m_door.transform.position.x, 0, hit.pose.position.z - m_door.transform.position.z);
+                    //Debug.Log(moveDirection.ToString());
+                    if (moveDirection.magnitude < m_doorMoveSpeed * Time.deltaTime)
+                        m_door.transform.Translate(moveDirection);
+                    else
                     {
-                        if (m_planeManager.GetPlane(listOfHits[i].trackableId).trackableId == m_doorPlane.trackableId)
-                        {
-                            ARRaycastHit hit = listOfHits[i];
-                            Vector3 moveDirection = new(hit.pose.position.x - m_door.transform.position.x, 0, hit.pose.position.z - m_door.transform.position.z);
-                            //Debug.Log(moveDirection.ToString());
-                            if (moveDirection.magnitude < m_doorMoveSpeed * Time.deltaTime)
-                                m_door.transform.Translate(moveDirection);
-                            else
-                            {
-                                moveDirection = moveDirection.normalized;
-                                m_door.transform.Translate(moveDirection * m_doorMoveSpeed * Time.deltaTime);
-                            }
-                            break;
-                        }
+                        moveDirection = moveDirection.normalized;
+                        m_door.transform.Translate(moveDirection * m_doorMoveSpeed * Time.deltaTime);
                     }
                 }
             }
         }
 
-        
-
-        private void UpdatePlane()
+        public void SpawnCubes(int _expectedCubesNbr)
         {
-            Debug.Log("Grossis");
+            if (m_door != null && m_nbrCubes < _expectedCubesNbr)
+            {
+                Unity.Mathematics.Random rand = new(((uint)Time.time));
+                float distanceMax = 0.1f;
+                while(m_nbrCubes < _expectedCubesNbr)
+                {
+                    float distanceX = rand.NextFloat(-distanceMax, distanceMax);
+                    float distanceZ = rand.NextFloat(-distanceMax, distanceMax);
+                    Vector3 origin = new(m_door.transform.position.x - distanceX, 0, m_door.transform.position.z - distanceZ);
+                    if (Physics.Raycast(origin, m_doorPlane.normal, out RaycastHit hit) && hit.collider.TryGetComponent(out ARPlane foundPlane))
+                    {
+                        if(foundPlane.trackableId == m_doorPlane.trackableId)
+                        {
+                            Vector3 cubePosition = hit.point + m_doorPlane.normal;
+                            Instantiate(m_cubePrefab, origin, Quaternion.Euler(0, 0, 0));
+                            m_nbrCubes++;
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -154,9 +154,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_planeManager: {fileID: 1868714100}
   m_raycastManager: {fileID: 1868714099}
-  m_doorPrefab: {fileID: 6271949037207399449, guid: b86b1d4aa8ce44040b5f47b4630f1582,
+  m_doorPrefab: {fileID: 8017545418642772885, guid: 06e88b0595781964aad670654b3fd763,
     type: 3}
   m_doorMoveSpeed: 1
+  m_cubePrefab: {fileID: 2465584238970527415, guid: 847d18702489b4a4b8b7a5e62d180e85,
+    type: 3}
 --- !u!4 &24661076
 Transform:
   m_ObjectHideFlags: 0
