@@ -923,9 +923,11 @@ MonoBehaviour:
     type: 3}
   m_ballPrefab: {fileID: 1914110490425419625, guid: 889d42621df0e1d4dbbd8c195d9a8408,
     type: 3}
+  m_wallPrefab: {fileID: 291082442020662927, guid: 3936b7fa4076f694d9fbe6a9c265a5c3,
+    type: 3}
   m_joystickPrefab: {fileID: 62364133}
-  m_ballForce: 5.4
-  AnimationBallInHoleDuration: 1
+  m_ballForce: 6
+  m_animationBallInHoleDuration: 2
 --- !u!1001 &1823504633
 PrefabInstance:
   m_ObjectHideFlags: 0
