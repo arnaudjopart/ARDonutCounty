@@ -1,11 +1,6 @@
 using DG.Tweening;
-using System.Buffers.Text;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using static UnityEngine.EventSystems.EventTrigger;
-using static UnityEngine.ProBuilder.AutoUnwrapSettings;
 
 namespace NJ
 {
@@ -31,7 +26,8 @@ namespace NJ
         //public GameObject m_joystickPrefab; // hole controller
         public Joystick m_joystickPrefab;
         public float m_ballForce = 6f; // Force pour tirer la bille ForceMode.VelocityChange
-        public float m_animationBallInHoleDuration = 0.5f;
+        public float m_animationBallInHoleDuration = 0.34f;
+        public float m_wallMovementDuration = 2.6f;
 
         private float minXBound = 0, maxXBound = 1, minYBound = 0, maxYBound = 1;
 
@@ -43,6 +39,7 @@ namespace NJ
         private Vector3 position, direction, ballPosition, cameraForward;
         private Ray rayMouseTouch;
         private Rigidbody rb;
+        private Tween movingWallInfiniteTween;
 
         public bool isWallMoving { get; set; }
 
@@ -56,28 +53,33 @@ namespace NJ
         }
         private void WallUpDown(bool _move)
         {
-Debug.Log("WallUpDown: " + _move);
-            float movementDuration = 2.6f;
-
             if (_move)
             {
                 Vector3 targetPosition = (m_currentHole.transform.position + m_currentBall.transform.position) / 2.0f;
                 targetPosition.y -= m_ballPrefab.gameObject.transform.localScale.y;
+                
+                //Quaternion cameraRotation = Camera.main.transform.rotation;
+                //cameraRotation = Quaternion.Euler(90, 0, 0);
                 //float yOffset = m_currentBall.transform.localScale.y * 2f;
                 //targetPosition.y += yOffset;
                 float distance = Vector3.Distance(m_currentHole.transform.position, targetPosition);
                 if (distance >= HOLE_BALL_DISTANCE_WALL)
                 {
-                    m_currentWall = Instantiate(m_wallPrefab, targetPosition, Quaternion.Euler(90, 0, 0));
-                    //m_currentWall.gameObject.SetActive(true);
-                    DOVirtual.Float(targetPosition.y, targetPosition.y + (2 * m_ballPrefab.gameObject.transform.localScale.y), movementDuration, (y) =>
+//Debug.Log("Cam.rotation:" + Camera.main.transform.rotation + " - Quat " + Quaternion.Euler(90, Camera.main.transform.rotation.y, 0));
+//Debug.Log("Cam.rotation:" + Camera.main.transform.rotation + " - Quat " + Quaternion.Euler(90, Camera.main.transform.rotation.y, Camera.main.transform.rotation.z));
+                    Quaternion rotation = Quaternion.LookRotation(m_currentBall.transform.position - m_currentHole.transform.position);
+//Debug.Log("Cam.rotation:" + Camera.main.transform.rotation + " - Quat rotation:" + rotation);
+                    m_currentWall = Instantiate(m_wallPrefab, targetPosition, Quaternion.Euler(90, rotation.eulerAngles.y+90, 0));
+                    RotateWallAndPosition();
+                    /*movingWallInfiniteTween = DOVirtual.Float(targetPosition.y, targetPosition.y + (2 * m_ballPrefab.gameObject.transform.localScale.y), movementDuration, (y) =>
                     {
                         m_currentWall.transform.position = new Vector3(m_currentWall.transform.position.x, y, m_currentWall.transform.position.z);
                     })
                     .OnComplete(() =>
                     {
-Debug.Log("finish wall");
-                    }).SetLoops(-1, LoopType.Yoyo);
+Debug.Log("finish wall destroy");
+                        Destroy(m_currentWall, 0.4f);
+                    }).SetLoops(-1, LoopType.Yoyo);*/
 
                 }
                 else
@@ -85,41 +87,44 @@ Debug.Log("finish wall");
 Debug.Log("Cylinder is too close to the hole:" + distance + " max:" + HOLE_BALL_DISTANCE_WALL);
                 }
             }
-            else
-            {
-                if (m_currentWall != null)
-                {
-                    // Calculate the target position below the ground
-                    Vector3 targetPosition = new Vector3(m_currentWall.transform.position.x, -2 * m_currentBall.transform.localScale.y, m_currentWall.transform.position.z);
+        }
+        void RotateWallAndPosition()
+        {
+            float startRotationY = m_currentWall.transform.rotation.eulerAngles.y;
+            movingWallInfiniteTween = m_currentWall.transform.DOMoveY(m_currentWall.transform.position.y + (2 * m_ballPrefab.gameObject.transform.localScale.y), m_wallMovementDuration)
+                .SetLoops(-1, LoopType.Yoyo)
+                .OnKill(() => { movingWallInfiniteTween.Kill(); Destroy(m_currentWall, 0.1f); });
 
-                    // Use DOVirtual.Float to smoothly interpolate the Y position
-                    DOVirtual.Float(m_currentWall.transform.position.y, targetPosition.y, movementDuration, (y) =>
-                    {
-                        // Update the wall's position based on the interpolated Y position
-                        m_currentWall.transform.position = new Vector3(m_currentWall.transform.position.x, y, m_currentWall.transform.position.z);
-                    }).OnComplete(() =>
-                    {
-                        m_currentWall.gameObject.SetActive(false);
-                        Debug.Log("WallUpDown end anim");
-                    });
-                }
-            }
+            /*m_currentWall.transform.DORotate(new Vector3(0, startRotationY + 180, 0), 3)
+                .SetLoops(-1, LoopType.Yoyo)
+                .OnKill(() => Destroy(m_currentWall));*/
         }
 
+        /*void RotateWallAndPosition()
+        {
+                float startRotationY = m_currentWall.transform.rotation.eulerAngles.y;
+                m_currentWall.transform.DOMoveY(m_currentWall.transform.position.y + (2 * m_ballPrefab.gameObject.transform.localScale.y), 2)
+                .SetLoops(-1, LoopType.Yoyo);
 
-/*private void CalculAndSetBounds()
-{
-        float objectHalfWidth = yourObjectTransform.localScale.x / 2;
-        float objectHalfHeight = yourObjectTransform.localScale.y / 2;
+                    m_currentWall.transform.DORotate(new Vector3(0, 0, startRotationY + 180), 3)
+                        .SetLoops(-1, LoopType.Yoyo)
+                        .OnKill(() => Destroy(m_currentWall));
+        }*/
 
-        Vector3 minScreenPoint = Camera.main.WorldToViewportPoint(new Vector3(-objectHalfWidth, -objectHalfHeight, 0));
-        Vector3 maxScreenPoint = Camera.main.WorldToViewportPoint(new Vector3(objectHalfWidth, objectHalfHeight, 0));
 
-        minXBound = minScreenPoint.x;
-        maxXBound = maxScreenPoint.x;
-        minYBound = minScreenPoint.y;
-        maxYBound = maxScreenPoint.y;
-}*/
+        /*private void CalculAndSetBounds()
+        {
+                float objectHalfWidth = yourObjectTransform.localScale.x / 2;
+                float objectHalfHeight = yourObjectTransform.localScale.y / 2;
+
+                Vector3 minScreenPoint = Camera.main.WorldToViewportPoint(new Vector3(-objectHalfWidth, -objectHalfHeight, 0));
+                Vector3 maxScreenPoint = Camera.main.WorldToViewportPoint(new Vector3(objectHalfWidth, objectHalfHeight, 0));
+
+                minXBound = minScreenPoint.x;
+                maxXBound = maxScreenPoint.x;
+                minYBound = minScreenPoint.y;
+                maxYBound = maxScreenPoint.y;
+        }*/
 
         private void OnDestroy()
         {
@@ -147,18 +152,13 @@ Debug.Log("Cylinder is too close to the hole:" + distance + " max:" + HOLE_BALL_
                     //rb.mass = 1f;
                     if (m_currentBall.transform != null)
                     {
-                        m_currentBall.transform.DOMove(new Vector3(1,1,1), 2f)
-                        .OnComplete(() =>
+                        m_currentBall.transform.DOScale(Vector3.zero, m_animationBallInHoleDuration).OnComplete(() =>
                         {
-                            Debug.Log("Position movement effect complete");
-                        });
-                        /*m_currentBall.transform.DOScale(Vector3.one, m_animationBallInHoleDuration).OnComplete(() =>
-                        {
-                            //Destroy(m_currentBall, 1f);
-                            //Destroy(m_currentWall, 1f);
+                            Destroy(m_currentBall);
+                            movingWallInfiniteTween.Kill();
+                            Destroy(m_currentWall);
                             //WallUpDown(false);
-Debug.Log("end hole");
-                        });*/
+                        });
                     }
                     else Debug.Log("m_currentBall.transform is null");
                 }
@@ -195,8 +195,8 @@ Debug.Log(fallDuration + " - ballRadius:" + ballRadius);
 Debug.Log("BallExitHole");
                 //m_currentBall.layer = LayerMask.NameToLayer("Default");
                 //m_currentBall.GetComponent<Rigidbody>().isKinematic = false;
-                Destroy(m_currentBall);
-                Destroy(m_currentWall);
+                //Destroy(m_currentBall);
+                //Destroy(m_currentWall);
             }
         }
 
@@ -287,6 +287,7 @@ Debug.Log("Clic on current ball");
             {
 Debug.Log("ball fall, retry");
                 Destroy(m_currentWall);
+                //movingWallInfiniteTween.Kill();
                 Destroy(m_currentBall);
             }
         }
