@@ -19,6 +19,10 @@ namespace pauline.gossart
         private GameObject m_hole;
         private Camera m_camera;
 
+        private Vector3 m_startPosition;
+        private Vector3 m_endPosition;
+        private Vector3 m_currentSwipe;
+        private bool m_allowsShooting;
 
         // Start is called before the first frame update
         void Start()
@@ -26,7 +30,7 @@ namespace pauline.gossart
             m_camera = Camera.main;
         }
 
-       
+
         // Update is called once per frame
         void Update()
         {
@@ -36,16 +40,16 @@ namespace pauline.gossart
                 if (IsClickingOnUIElement()) return;
 
 
-                Vector2 position = new Vector2();
+
 #if UNITY_EDITOR
-                position = Input.mousePosition;
+                m_startPosition = Input.mousePosition;
 #else
-            position = Input.GetTouch(0).position;
+            m_startPosition = Input.GetTouch(0).position;
 #endif
 
                 List<ARRaycastHit> listOfHits = new List<ARRaycastHit>();
 
-                if (m_raycastManager.Raycast(position, listOfHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
+                if (m_raycastManager.Raycast(m_startPosition, listOfHits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
                 {
                     ARRaycastHit hit = listOfHits[0];
                     var positionOfHit = hit.pose.position;
@@ -53,19 +57,34 @@ namespace pauline.gossart
                     if (m_hole == null)
                     {
                         m_hole = Instantiate(m_holePrefab, positionOfHit, Quaternion.identity);
+
                     }
-                    /* else
-                     {
-                         float distance = Vector3.Distance(m_hole.transform.position, positionOfHit);
-                         //m_hole.transform.position = positionOfHit;
-                         m_hole.transform.DOMove(positionOfHit, duration * distance).SetEase(Ease.InOutSine);
-                     }
-                    */
-                    else
-                    {
-                        Instantiate(m_cubePrefab, positionOfHit + Vector3.up * cubeDropDistance, Quaternion.identity);
-                    }
+
                 }
+            }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                if (IsClickingOnUIElement()) return;
+
+                if (m_allowsShooting == false)
+                {
+                    m_allowsShooting = true;
+                    return;
+                }
+
+                m_endPosition = Input.mousePosition;
+
+                m_currentSwipe = m_endPosition - m_startPosition;
+
+                if (m_currentSwipe != m_startPosition)
+                {
+                    var instance = Instantiate(m_cubePrefab, m_startPosition, Quaternion.identity);
+                    instance.GetComponent<Rigidbody>().AddForce(m_startPosition * 3);
+
+                    Debug.Log("this is the current swipe position " + m_currentSwipe);
+                }
+
             }
 
 
@@ -132,7 +151,26 @@ namespace pauline.gossart
         {
             return EventSystem.current.IsPointerOverGameObject();
         }
+
+        private void Swipe()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                m_startPosition = Input.mousePosition;
+            }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                m_endPosition = Input.mousePosition;
+
+                m_currentSwipe = m_endPosition - m_startPosition;
+
+                Debug.Log("this is the current swipe position " + m_currentSwipe);
+            }
+        }
+
     }
+
 }
 
 
