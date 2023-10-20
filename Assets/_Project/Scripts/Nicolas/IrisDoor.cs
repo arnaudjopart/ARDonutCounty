@@ -12,12 +12,12 @@ namespace NJ
         void Start()
         {
             Open();
-            BallEnter.OnBallEnterHole += BallEnterHole;
+            BallEnterHole.OnBallEnterHole += OnBallEnterHole;
         }
 
-        private void BallEnterHole()
+        private void OnBallEnterHole(bool _wasFlying = false)
         {
-Debug.Log("nbBall hole " + nbBall);
+Debug.Log("Enter hole _wasFlying"+ _wasFlying +" - nbBall hole " + nbBall);
             nbBall++;
             if (nbBall >= m_maxBallInHole)
                 Close();

@@ -10,9 +10,12 @@ namespace NJ
     //TODO each point make your ball far from hole
     //TODO boucing wall
     //TODO hole stay in plane
+    //TODO jump lenght
     public class BouncingBallGame : MonoBehaviour
     {
+        public static event System.Action OnHoleAppear;
         public static event System.Action OnBallAppear;
+        public static event System.Action<bool> OnBallPitch;
 
         private const float RAY_CAST_MAX_DISTANCE = 40f;
         private const int BALL_FALL_Y_DESTROY = -4;
@@ -23,9 +26,12 @@ namespace NJ
         public GameObject m_holePrefab;
         public GameObject m_ballPrefab;
         public GameObject m_wallPrefab;
+        public int m_wallXAngle = 45;
+        public int m_wallYAngleToAdd = 180;
         //public GameObject m_joystickPrefab; // hole controller
         public Joystick m_joystickPrefab;
-        public float m_ballForce = 6f; // Force pour tirer la bille ForceMode.VelocityChange
+        public float m_ballForce = 8f; // Force pour tirer la bille ForceMode.VelocityChange
+        private float m_minSpeedFromClickPositionOnBall = -3f;
         public float m_animationBallInHoleDuration = 0.34f;
         public float m_wallMovementDuration = 2.6f;
 
@@ -47,8 +53,8 @@ namespace NJ
         {
             m_joystickPrefab.gameObject.SetActive(false);
             //CalculAndSetBounds();
-            BallEnter.OnBallEnterHole += BallEnterHole;
-            BallEnter.OnBallExitHole += BallExitHole;
+            BallEnterHole.OnBallEnterHole += OnBallEnterHole;
+            BallEnterHole.OnBallExitHole += OnBallExitHole;
             //WallUpDown(false);
         }
         private void WallUpDown(bool _move)
@@ -69,7 +75,7 @@ namespace NJ
 //Debug.Log("Cam.rotation:" + Camera.main.transform.rotation + " - Quat " + Quaternion.Euler(90, Camera.main.transform.rotation.y, Camera.main.transform.rotation.z));
                     Quaternion rotation = Quaternion.LookRotation(m_currentBall.transform.position - m_currentHole.transform.position);
 //Debug.Log("Cam.rotation:" + Camera.main.transform.rotation + " - Quat rotation:" + rotation);
-                    m_currentWall = Instantiate(m_wallPrefab, targetPosition, Quaternion.Euler(90, rotation.eulerAngles.y+90, 0));
+                    m_currentWall = Instantiate(m_wallPrefab, targetPosition, Quaternion.Euler(m_wallXAngle, rotation.eulerAngles.y + m_wallYAngleToAdd, 0));
                     RotateWallAndPosition();
                     /*movingWallInfiniteTween = DOVirtual.Float(targetPosition.y, targetPosition.y + (2 * m_ballPrefab.gameObject.transform.localScale.y), movementDuration, (y) =>
                     {
@@ -128,11 +134,11 @@ Debug.Log("Cylinder is too close to the hole:" + distance + " max:" + HOLE_BALL_
 
         private void OnDestroy()
         {
-            BallEnter.OnBallEnterHole -= BallEnterHole;
-            BallEnter.OnBallExitHole -= BallExitHole;
+            BallEnterHole.OnBallEnterHole -= OnBallEnterHole;
+            BallEnterHole.OnBallExitHole -= OnBallExitHole;
         }
 
-        private void BallEnterHole()
+        private void OnBallEnterHole(bool wasFlying = false)
         {
             if (m_currentBall != null)
             {
@@ -152,13 +158,24 @@ Debug.Log("Cylinder is too close to the hole:" + distance + " max:" + HOLE_BALL_
                     //rb.mass = 1f;
                     if (m_currentBall.transform != null)
                     {
-                        m_currentBall.transform.DOScale(Vector3.zero, m_animationBallInHoleDuration).OnComplete(() =>
+                        if (wasFlying)
                         {
-                            Destroy(m_currentBall);
-                            movingWallInfiniteTween.Kill();
-                            Destroy(m_currentWall);
-                            //WallUpDown(false);
-                        });
+                            m_currentBall.transform.DOScale(new Vector3(1.6f, 1.6f, 1.6f), m_animationBallInHoleDuration).OnComplete(() =>
+                            {
+                                Destroy(m_currentBall);
+                                movingWallInfiniteTween.Kill();
+                                Destroy(m_currentWall);
+                            });
+                        }
+                        else
+                        {
+                            m_currentBall.transform.DOScale(Vector3.zero, m_animationBallInHoleDuration).OnComplete(() =>
+                            {
+                                Destroy(m_currentBall);
+                                movingWallInfiniteTween.Kill();
+                                Destroy(m_currentWall);
+                            });
+                        }
                     }
                     else Debug.Log("m_currentBall.transform is null");
                 }
@@ -188,7 +205,7 @@ Debug.Log(fallDuration + " - ballRadius:" + ballRadius);
                 }*/
             }
         }
-        private void BallExitHole()
+        private void OnBallExitHole()
         {
             if (m_currentBall != null)
             {
@@ -245,6 +262,7 @@ Debug.Log("BallExitHole");
 //Debug.Log("Hole - Vector2.up" + Vector2.up);
                         //if (hit.transform.CompareTag("Ground"))
                         {
+                            OnHoleAppear?.Invoke();
                             m_currentHole = Instantiate(m_holePrefab, hit.point, Quaternion.identity);
                             m_joystickPrefab.gameObject.SetActive(true);
                         }
@@ -268,7 +286,7 @@ Debug.Log("Ball layer:" + m_currentBall.layer);
                 {
                     if (Physics.Raycast(rayMouseTouch, out RaycastHit hit, RAY_CAST_MAX_DISTANCE) && hit.collider.CompareTag("Player"))
                     {
-Debug.Log("Clic on current ball");
+//Debug.Log("Clic on current ball");
                         position = hit.point;
                         ballPosition = m_currentBall.transform.position;
                         direction = (ballPosition - position).normalized;
@@ -277,8 +295,12 @@ Debug.Log("Clic on current ball");
                         if (rb != null)
                         {
                             rb.AddForce(direction * m_ballForce, ForceMode.VelocityChange);
+                            //float launchSpeed = rb.velocity.magnitude;
+Debug.Log("direction * m_ballForce:" + (direction * m_ballForce));
+                            bool isHardPush = (direction * m_ballForce).x < m_minSpeedFromClickPositionOnBall;
+                            OnBallPitch?.Invoke(isHardPush);
                         }
-                    }
+                    }   
                 }
             }
 
