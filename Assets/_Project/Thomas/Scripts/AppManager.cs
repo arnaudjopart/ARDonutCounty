@@ -21,6 +21,7 @@ namespace Thomas
         [SerializeField] GameObject m_cubePrefab;
         [SerializeField] private Count m_nbrCubes;
         [SerializeField] private Count m_score;
+        [SerializeField] private Material m_transparentMaterial;
 
         public void Start()
         {
@@ -36,42 +37,37 @@ namespace Thomas
 
         public override void ProcessTouchDown(Vector2 _touchPosition)
         {
-            if (IsClickingOnUIElement()) return;
-            if (m_door == null)
+            if (IsClickingOnUIElement() || m_door != null) return;
+            List<ARRaycastHit> listOfHits = new();
+            if (m_raycastManager.Raycast(_touchPosition, listOfHits, TrackableType.PlaneWithinPolygon) && m_planeManager.GetPlane(listOfHits[0].trackableId).alignment.IsHorizontal())
             {
-                List<ARRaycastHit> listOfHits = new();
-                if (m_raycastManager.Raycast(_touchPosition, listOfHits, TrackableType.PlaneWithinPolygon) && m_planeManager.GetPlane(listOfHits[0].trackableId).alignment.IsHorizontal())
+                ARRaycastHit hit = listOfHits[0];
+                m_doorPlane = m_planeManager.GetPlane(hit.trackableId);
+                m_doorPlane.boundaryChanged += UpdatePlane;
+                Vector3 positionOfHit = hit.pose.position;
+                m_door = Instantiate(m_doorPrefab, positionOfHit, Quaternion.identity);
+                foreach (ARPlane plane in m_planeManager.trackables)
                 {
-                    ARRaycastHit hit = listOfHits[0];
-                    m_doorPlane = m_planeManager.GetPlane(hit.trackableId);
-                    Vector3 positionOfHit = hit.pose.position;
-                    m_door = Instantiate(m_doorPrefab, positionOfHit, Quaternion.identity);
-                    foreach(ARPlane plane in m_planeManager.trackables)
-                    {
-                        if (plane.trackableId != m_doorPlane.trackableId && plane.center.y != m_doorPlane.center.y)
-                            plane.GetComponent<MeshCollider>().enabled = false;
-                    }
+                    if (plane.trackableId != m_doorPlane.trackableId && plane.center.y != m_doorPlane.center.y)
+                        DeactivatePlane(plane);
                 }
             }
         }
 
         public override void ProcessTouch(Vector2 _touchPosition)
         {
-            if (IsClickingOnUIElement()) return;
-            if (m_door != null)
-            {
+            if (IsClickingOnUIElement() || m_door == null) return;
                 List<ARRaycastHit> listOfHits = new();
-                if (m_raycastManager.Raycast(_touchPosition, listOfHits, TrackableType.PlaneWithinPolygon))
+            if (m_raycastManager.Raycast(_touchPosition, listOfHits, TrackableType.PlaneWithinPolygon))
+            {
+                ARRaycastHit hit = listOfHits[0];
+                Vector3 moveDirection = new(hit.pose.position.x - m_door.transform.position.x, 0, hit.pose.position.z - m_door.transform.position.z);
+                if (moveDirection.magnitude < m_doorMoveSpeed * Time.deltaTime)
+                    m_door.transform.Translate(moveDirection);
+                else
                 {
-                    ARRaycastHit hit = listOfHits[0];
-                    Vector3 moveDirection = new(hit.pose.position.x - m_door.transform.position.x, 0, hit.pose.position.z - m_door.transform.position.z);
-                    if (moveDirection.magnitude < m_doorMoveSpeed * Time.deltaTime)
-                        m_door.transform.Translate(moveDirection);
-                    else
-                    {
-                        moveDirection = moveDirection.normalized;
-                        m_door.transform.Translate(moveDirection * m_doorMoveSpeed * Time.deltaTime);
-                    }
+                    moveDirection = moveDirection.normalized;
+                    m_door.transform.Translate(moveDirection * m_doorMoveSpeed * Time.deltaTime);
                 }
             }
         }
@@ -120,13 +116,25 @@ namespace Thomas
             foreach (ARPlane plane in args.added)
             {
                 if (plane.center.y != m_doorPlane.center.y)
-                    plane.GetComponent<MeshCollider>().enabled = false;
+                    DeactivatePlane(plane);
             }
             foreach (ARPlane plane in args.updated)
             {
                 if (plane.trackableId != m_doorPlane.trackableId && plane.center.y != m_doorPlane.center.y)
-                    plane.GetComponent<MeshCollider>().enabled = false;
+                    DeactivatePlane(plane);
             }
+        }
+
+        private void UpdatePlane(ARPlaneBoundaryChangedEventArgs args)
+        {
+            m_doorPlane = args.plane;
+            Debug.Log("Tout va bien");  
+        }
+
+        private void DeactivatePlane(ARPlane plane)
+        {
+            plane.GetComponent<MeshCollider>().enabled = false;
+            //plane.GetComponent<MeshRenderer>().material = m_transparentMaterial;
         }
 
         private bool IsClickingOnUIElement()

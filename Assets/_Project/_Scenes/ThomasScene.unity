@@ -157,9 +157,10 @@ MonoBehaviour:
   m_doorPrefab: {fileID: 2986873215845392448, guid: 1fb6b441ef1a5ea40bf2bdad77875d16,
     type: 3}
   m_doorMoveSpeed: 1
-  m_cubePrefab: {fileID: 2465584238970527415, guid: 847d18702489b4a4b8b7a5e62d180e85,
+  m_cubePrefab: {fileID: 7864062968904172137, guid: 35361e898f70f2946ad435241b13ac61,
     type: 3}
   m_nbrCubes: {fileID: 11400000, guid: 7991cfcfbe47c6540ae72c367390f1cb, type: 2}
+  m_score: {fileID: 0}
 --- !u!4 &24661076
 Transform:
   m_ObjectHideFlags: 0
