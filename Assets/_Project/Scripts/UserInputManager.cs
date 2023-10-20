@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.XR.ARFoundation;
 
 public class UserInputManager : MonoBehaviour
@@ -21,6 +23,7 @@ public class UserInputManager : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
+            if (IsClickingOnUIElement()) return;
             var position = new Vector2();
 #if UNITY_EDITOR
             position = Input.mousePosition;
@@ -56,6 +59,11 @@ public class UserInputManager : MonoBehaviour
 
             }
         }
+    }
+
+    private bool IsClickingOnUIElement()
+    {
+        return EventSystem.current.IsPointerOverGameObject(); 
     }
 
     public void GenerateCubeAtViewPortPosition()
