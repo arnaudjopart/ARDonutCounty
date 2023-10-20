@@ -71,6 +71,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 927457277372997716}
+    - targetCorrespondingSourceObject: {fileID: 2465584238970527415, guid: 847d18702489b4a4b8b7a5e62d180e85,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6162324926375688229}
   m_SourcePrefab: {fileID: 100100000, guid: 847d18702489b4a4b8b7a5e62d180e85, type: 3}
 --- !u!1 &7864062968904172137 stripped
 GameObject:
@@ -91,5 +95,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nbrCubes: {fileID: 11400000, guid: 7991cfcfbe47c6540ae72c367390f1cb, type: 2}
-  m_doorPrefab: {fileID: 2986873215845392448, guid: 1fb6b441ef1a5ea40bf2bdad77875d16,
-    type: 3}
+--- !u!114 &6162324926375688229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7864062968904172137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b08ce899d13b2546afcdb720b7ce383, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_score: {fileID: 11400000, guid: db682dfece2968d46b370510d20fe69a, type: 2}
+  m_value: 0

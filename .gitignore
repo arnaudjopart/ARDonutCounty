@@ -188,3 +188,6 @@ sysinfo.txt
 
 # End of https://www.toptal.com/developers/gitignore/api/unity,jetbrains
 .idea/*
+Assets/UnityXRContent/ARFoundation/SimulationEnvironments/Common/Materials/SimEnvironment_Accent.mat
+Assets/UnityXRContent/ARFoundation/SimulationEnvironments/Common/Materials/SimEnvironment_Carpet.mat
+Assets/UnityXRContent/ARFoundation/SimulationEnvironments/Common/Materials/SimEnvironment_Floor.mat

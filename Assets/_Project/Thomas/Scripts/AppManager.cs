@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -15,26 +16,51 @@ namespace Thomas
         [SerializeField] private ARPlaneManager m_planeManager;
         [SerializeField] private ARRaycastManager m_raycastManager;
         [SerializeField] private GameObject m_doorPrefab;
+        [SerializeField] GameObject m_cubePrefab;
         private GameObject m_door;
         private float m_doorPlaneHeight;
+        [SerializeField] private float m_doorMoveSpeed = 1;
         [SerializeField] private float m_heightMargin = 0.1f;
-        [SerializeField] private float m_doorMoveSpeed;
-        [SerializeField] GameObject m_cubePrefab;
+        [SerializeField] private float m_growingMultiplier = 1.2f;
+        [SerializeField] private int m_finalLevel = 10;
         [SerializeField] private Count m_nbrCubes;
-        [SerializeField] private int m_finalNbrCubesOnSpawn;
         [SerializeField] private Count m_score;
+        [SerializeField] private Count m_level;
         [SerializeField] private Material m_transparentMaterial;
+        [SerializeField] private TMP_Text m_scoreText;
+        [SerializeField] private TMP_Text m_levelText;
 
         public void Start()
         {
             m_nbrCubes.count = 0;
+            m_score.count = 0;
+            m_scoreText.text = m_score.count.ToString();
+            m_level.count = 1;
+            m_levelText.text = "Level " + m_level.count.ToString();
             m_planeManager.planesChanged += SupressNewPlanes;
         }
 
         private void Update()
         {
-            if (m_nbrCubes.count == 0 && m_door != null)
+            if (int.TryParse(m_scoreText.text, out int score) && score != m_score.count)
+            {
+                m_scoreText.text = m_score.count.ToString();
+                if (m_score.count % (5 * ((m_level.count) * (m_level.count))) == 0)
+                {
+                    if (m_level.count < m_finalLevel)
+                    {
+                        m_level.count++;
+                        m_levelText.text = "Level " + m_level.count.ToString();
+                        GrowDoor(m_growingMultiplier);
+                    }
+                    else
+                        Debug.Log("Bravo, vous avez gagné !");
+                }
+            }
+            if (m_nbrCubes.count == 0 && m_door != null && score < 5 * m_finalLevel * m_finalLevel)
+            {
                 SpawnCubes();
+            }
         }
 
         public override void ProcessTouchDown(Vector2 _touchPosition)
@@ -80,13 +106,14 @@ namespace Thomas
 
         public void SpawnCubes()
         {
-            if (m_door != null && m_nbrCubes.count < m_finalNbrCubesOnSpawn)
+            DetermineAmoutOfCubesToSpawn(out int amountSmallCubes);
+            if (m_door != null && m_nbrCubes.count < amountSmallCubes)
             {
                 Unity.Mathematics.Random rand = new(((uint)Time.time));
                 float distanceMin = 0.3f;
-                float distanceMax = 1;
+                float distanceMax = 0.5f * m_level.count;
                 int tries = 0;
-                while(m_nbrCubes.count < m_finalNbrCubesOnSpawn)
+                while(m_nbrCubes.count < amountSmallCubes)
                 {
                     float distanceX = rand.NextFloat(distanceMin, distanceMax);
                     int exposant = rand.NextInt(0, 2);
@@ -101,9 +128,13 @@ namespace Thomas
                     {
                         if (hit.collider.TryGetComponent(out ARPlane plane) && !PlaneIsInvalid(plane))
                         {
-                                Vector3 cubePosition = hit.point + Vector3.up;
-                                Instantiate(m_cubePrefab, cubePosition, Quaternion.Euler(0, 0, 0));
-                                m_nbrCubes.count++;
+                            Vector3 cubePosition = hit.point + Vector3.up;
+                            GameObject cube = Instantiate(m_cubePrefab, cubePosition, Quaternion.Euler(0, 0, 0));
+                            cube.GetComponent<Cube>().m_value = 1;
+                            m_nbrCubes.count++;
+
+                            if (m_nbrCubes.count + m_score.count >= 5 * m_finalLevel * m_finalLevel)
+                                break;
                         }
                     }
                     tries++;
@@ -114,6 +145,11 @@ namespace Thomas
                     }
                 }
             }
+        }
+
+        public void DetermineAmoutOfCubesToSpawn(out int _amountSmallCubes)
+        {
+            _amountSmallCubes = m_level.count * 5;
         }
 
         private void SupressNewPlanes(ARPlanesChangedEventArgs args)
@@ -140,6 +176,13 @@ namespace Thomas
         {
             plane.GetComponent<MeshCollider>().enabled = false;
             //plane.GetComponent<MeshRenderer>().
+        }
+
+        private void GrowDoor(float _multiplier)
+        {
+            if (m_door == null) return;
+            m_door.transform.localScale *= _multiplier;
+            m_doorMoveSpeed *= _multiplier;
         }
 
         private bool IsClickingOnUIElement()
