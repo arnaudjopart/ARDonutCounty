@@ -519,72 +519,6 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!1 &8393816632796894838
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3193419726911496133}
-  - component: {fileID: 261104972879823399}
-  - component: {fileID: 7721709390101267178}
-  m_Layer: 8
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3193419726911496133
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8393816632796894838}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.51, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6647771305135961763}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &261104972879823399
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8393816632796894838}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9735f731b7446424b9068d808abe287c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!65 &7721709390101267178
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8393816632796894838}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &6614408767198237000
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -753,11 +687,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Iris Door
       objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 1f949c5c9dea39b4896f33eef9786360,
-        type: 3}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
     - target: {fileID: 2891746525080496957, guid: 1f949c5c9dea39b4896f33eef9786360,
         type: 3}
       propertyPath: m_Layer
@@ -826,19 +755,11 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 5281485110697744996}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1f949c5c9dea39b4896f33eef9786360,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3193419726911496133}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1f949c5c9dea39b4896f33eef9786360,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2836744214484636219}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1f949c5c9dea39b4896f33eef9786360,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5891233414061586029}
   m_SourcePrefab: {fileID: 100100000, guid: 1f949c5c9dea39b4896f33eef9786360, type: 3}
 --- !u!4 &1295715215056142909 stripped
 Transform:
@@ -881,29 +802,6 @@ MonoBehaviour:
   - {fileID: 5516292433650505653}
   - {fileID: 2753372496546608503}
   - {fileID: 1295715215056142909}
---- !u!136 &5891233414061586029
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6271949037207399449}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &6647771305135961763 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1f949c5c9dea39b4896f33eef9786360,
