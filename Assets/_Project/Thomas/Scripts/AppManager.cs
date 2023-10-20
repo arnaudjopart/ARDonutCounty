@@ -19,9 +19,9 @@ namespace Thomas
         [SerializeField] GameObject m_cubePrefab;
         private GameObject m_door;
         private float m_doorPlaneHeight;
-        [SerializeField] private float m_doorMoveSpeed;
+        [SerializeField] private float m_doorMoveSpeed = 1;
         [SerializeField] private float m_heightMargin = 0.1f;
-        //[SerializeField] private int m_finalNbrCubesOnSpawn;
+        [SerializeField] private float m_growingMultiplier = 1.2f;
         [SerializeField] private Count m_nbrCubes;
         [SerializeField] private Count m_score;
         [SerializeField] private Count m_level;
@@ -44,13 +44,14 @@ namespace Thomas
             if (int.TryParse(m_scoreText.text, out int score) && score != m_score.count)
             {
                 m_scoreText.text = m_score.count.ToString();
-                if (m_score.count % 15 == 0)
+                if (m_score.count % (5 * ((m_level.count) * (m_level.count))) == 0)
                 {
                     m_level.count++;
                     m_levelText.text = "Level " + m_level.count.ToString();
+                    GrowDoor(m_growingMultiplier);
                 }
             }
-            if (m_nbrCubes.count == 0 && m_door != null)
+            if (m_nbrCubes.count == 0 && m_door != null && score != 500)
                 SpawnCubes();
         }
 
@@ -102,7 +103,7 @@ namespace Thomas
             {
                 Unity.Mathematics.Random rand = new(((uint)Time.time));
                 float distanceMin = 0.3f;
-                float distanceMax = 1;
+                float distanceMax = 0.5f * m_level.count;
                 int tries = 0;
                 while(m_nbrCubes.count < amountSmallCubes)
                 {
@@ -123,6 +124,9 @@ namespace Thomas
                             GameObject cube = Instantiate(m_cubePrefab, cubePosition, Quaternion.Euler(0, 0, 0));
                             cube.GetComponent<Cube>().m_value = 1;
                             m_nbrCubes.count++;
+
+                            if (m_nbrCubes.count + m_score.count >= 500)
+                                break;
                         }
                     }
                     tries++;
@@ -164,6 +168,13 @@ namespace Thomas
         {
             plane.GetComponent<MeshCollider>().enabled = false;
             //plane.GetComponent<MeshRenderer>().
+        }
+
+        private void GrowDoor(float _multiplier)
+        {
+            if (m_door == null) return;
+            m_door.transform.localScale *= _multiplier;
+            m_doorMoveSpeed *= _multiplier;
         }
 
         private bool IsClickingOnUIElement()
