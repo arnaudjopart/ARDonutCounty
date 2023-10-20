@@ -6,13 +6,11 @@ using UnityEngine;
 public class IrisDoor : MonoBehaviour
 {
     [SerializeField] Transform[] m_doors;
-    // Start is called before the first frame update
     void Start()
     {
         Open();
     }
 
-    // Update is called once per frame
     void Update()
     {
 
