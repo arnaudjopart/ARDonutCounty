@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -15,24 +16,29 @@ namespace Thomas
         [SerializeField] private ARPlaneManager m_planeManager;
         [SerializeField] private ARRaycastManager m_raycastManager;
         [SerializeField] private GameObject m_doorPrefab;
+        [SerializeField] GameObject m_cubePrefab;
         private GameObject m_door;
         private float m_doorPlaneHeight;
-        [SerializeField] private float m_heightMargin = 0.1f;
         [SerializeField] private float m_doorMoveSpeed;
-        [SerializeField] GameObject m_cubePrefab;
-        [SerializeField] private Count m_nbrCubes;
+        [SerializeField] private float m_heightMargin = 0.1f;
         [SerializeField] private int m_finalNbrCubesOnSpawn;
+        [SerializeField] private Count m_nbrCubes;
         [SerializeField] private Count m_score;
         [SerializeField] private Material m_transparentMaterial;
+        [SerializeField] private TMP_Text m_scoreText;
 
         public void Start()
         {
             m_nbrCubes.count = 0;
+            m_score.count = 0;
+            m_scoreText.text = m_score.count.ToString();
             m_planeManager.planesChanged += SupressNewPlanes;
         }
 
         private void Update()
         {
+            if (int.TryParse(m_scoreText.text, out int score) && score != m_score.count)
+                m_scoreText.text = m_score.count.ToString();
             if (m_nbrCubes.count == 0 && m_door != null)
                 SpawnCubes();
         }

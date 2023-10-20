@@ -71,6 +71,7 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 8249008086935442741, guid: 06e88b0595781964aad670654b3fd763, type: 3}
     - {fileID: 7554774100557372914, guid: 06e88b0595781964aad670654b3fd763, type: 3}
+    - {fileID: 918782555660523391, guid: 06e88b0595781964aad670654b3fd763, type: 3}
     m_RemovedGameObjects:
     - {fileID: 5490636430911023610, guid: 06e88b0595781964aad670654b3fd763, type: 3}
     m_AddedGameObjects: []
@@ -99,3 +100,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_nbrCubes: {fileID: 11400000, guid: 7991cfcfbe47c6540ae72c367390f1cb, type: 2}
+  m_score: {fileID: 11400000, guid: db682dfece2968d46b370510d20fe69a, type: 2}
