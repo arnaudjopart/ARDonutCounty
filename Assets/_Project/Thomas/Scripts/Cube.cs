@@ -7,12 +7,7 @@ namespace Thomas
     public class Cube : MonoBehaviour
     {
         [SerializeField] private Count m_score;
-        [HideInInspector] public int m_value = 0;
-
-        private void Start()
-        {
-
-        }
+        [HideInInspector] public int m_value;
 
         private void OnDestroy()
         {

@@ -21,24 +21,35 @@ namespace Thomas
         private float m_doorPlaneHeight;
         [SerializeField] private float m_doorMoveSpeed;
         [SerializeField] private float m_heightMargin = 0.1f;
-        [SerializeField] private int m_finalNbrCubesOnSpawn;
+        //[SerializeField] private int m_finalNbrCubesOnSpawn;
         [SerializeField] private Count m_nbrCubes;
         [SerializeField] private Count m_score;
+        [SerializeField] private Count m_level;
         [SerializeField] private Material m_transparentMaterial;
         [SerializeField] private TMP_Text m_scoreText;
+        [SerializeField] private TMP_Text m_levelText;
 
         public void Start()
         {
             m_nbrCubes.count = 0;
             m_score.count = 0;
             m_scoreText.text = m_score.count.ToString();
+            m_level.count = 1;
+            m_levelText.text = "Level " + m_level.count.ToString();
             m_planeManager.planesChanged += SupressNewPlanes;
         }
 
         private void Update()
         {
             if (int.TryParse(m_scoreText.text, out int score) && score != m_score.count)
+            {
                 m_scoreText.text = m_score.count.ToString();
+                if (m_score.count % 15 == 0)
+                {
+                    m_level.count++;
+                    m_levelText.text = "Level " + m_level.count.ToString();
+                }
+            }
             if (m_nbrCubes.count == 0 && m_door != null)
                 SpawnCubes();
         }
@@ -86,13 +97,14 @@ namespace Thomas
 
         public void SpawnCubes()
         {
-            if (m_door != null && m_nbrCubes.count < m_finalNbrCubesOnSpawn)
+            DetermineAmoutOfCubesToSpawn(out int amountSmallCubes);
+            if (m_door != null && m_nbrCubes.count < amountSmallCubes)
             {
                 Unity.Mathematics.Random rand = new(((uint)Time.time));
                 float distanceMin = 0.3f;
                 float distanceMax = 1;
                 int tries = 0;
-                while(m_nbrCubes.count < m_finalNbrCubesOnSpawn)
+                while(m_nbrCubes.count < amountSmallCubes)
                 {
                     float distanceX = rand.NextFloat(distanceMin, distanceMax);
                     int exposant = rand.NextInt(0, 2);
@@ -121,6 +133,11 @@ namespace Thomas
                     }
                 }
             }
+        }
+
+        public void DetermineAmoutOfCubesToSpawn(out int _amountSmallCubes)
+        {
+            _amountSmallCubes = m_level.count * 5;
         }
 
         private void SupressNewPlanes(ARPlanesChangedEventArgs args)
