@@ -107,9 +107,10 @@ namespace Thomas
                     {
                         if (hit.collider.TryGetComponent(out ARPlane plane) && !PlaneIsInvalid(plane))
                         {
-                                Vector3 cubePosition = hit.point + Vector3.up;
-                                Instantiate(m_cubePrefab, cubePosition, Quaternion.Euler(0, 0, 0));
-                                m_nbrCubes.count++;
+                            Vector3 cubePosition = hit.point + Vector3.up;
+                            GameObject cube = Instantiate(m_cubePrefab, cubePosition, Quaternion.Euler(0, 0, 0));
+                            cube.GetComponent<Cube>().m_value = 1;
+                            m_nbrCubes.count++;
                         }
                     }
                     tries++;

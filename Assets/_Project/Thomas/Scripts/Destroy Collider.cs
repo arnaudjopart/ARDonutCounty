@@ -13,7 +13,6 @@ namespace Thomas
         {
             Destroy(other.gameObject);
             m_nbrCubes.count--;
-            m_score.count++;
         }
     }
 }
