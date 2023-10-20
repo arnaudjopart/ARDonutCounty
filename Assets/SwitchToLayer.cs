@@ -10,7 +10,7 @@ public class SwitchToLayer : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("SwitchToLayer - OnTriggerEnter - " + other.name);
+        //Debug.Log("SwitchToLayer - OnTriggerEnter - " + other.name);
         other.gameObject.layer = LayerMask.NameToLayer("HoleContent");
     }
 }
