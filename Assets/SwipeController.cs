@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using Christophe.Fanchamps;
 
 public class SwipeController : MonoBehaviour
 {
@@ -9,6 +11,11 @@ public class SwipeController : MonoBehaviour
     [SerializeField] GameObject cubePrefab;
     Vector3 direction;
     [SerializeField] float throwForce;
+    public static event Action<Vector3> OnCubeCreate;
+    bool isMouseDown;
+    [SerializeField] Projection projectionPrediction;
+    Vector3 destination;
+
 
     private void Update()
     {
@@ -18,8 +25,12 @@ public class SwipeController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             startTouchPosition = Input.mousePosition;
+            isMouseDown = true;
 
         }
+
+        if (isMouseDown)
+        {
 
         if(Input.GetMouseButtonUp(0))
         {
@@ -45,8 +56,16 @@ public class SwipeController : MonoBehaviour
 
 
 
-            GameObject cube = Instantiate(cubePrefab, Camera.main.transform.position + Camera.main.transform.forward * 0.5f, Quaternion.identity); ;
-            cube.GetComponent<Rigidbody>().AddForce(cameraRelativeMovement, ForceMode.Impulse);
+            GameObject cube = Instantiate(cubePrefab, Camera.main.transform.position + Camera.main.transform.forward * 0.5f, Quaternion.identity);
+                Throw throwParameters = cube.GetComponent<Throw>();
+            throwParameters.ThrowObject(cameraRelativeMovement);
+                destination =  projectionPrediction.SimulateTrajectory(throwParameters, Camera.main.transform.position + Camera.main.transform.forward * 0.5f, cameraRelativeMovement);
+
+                OnCubeCreate?.Invoke(destination);
+                isMouseDown = false;
+        }
+
+
         }
 
 #else
