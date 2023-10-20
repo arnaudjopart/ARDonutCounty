@@ -36,7 +36,7 @@ public class Projection : MonoBehaviour
             {
                 m_physicsScene.Simulate(Time.fixedDeltaTime);
                 destination = ghostObj.transform.position;
-                Debug.Log("position predicted : " + destination);
+               
             }
 
 

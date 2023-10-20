@@ -59,9 +59,14 @@ public class SwipeController : MonoBehaviour
             GameObject cube = Instantiate(cubePrefab, Camera.main.transform.position + Camera.main.transform.forward * 0.5f, Quaternion.identity);
                 Throw throwParameters = cube.GetComponent<Throw>();
             throwParameters.ThrowObject(cameraRelativeMovement);
+                if (projectionPrediction.isActiveAndEnabled)
+                {
+
                 destination =  projectionPrediction.SimulateTrajectory(throwParameters, Camera.main.transform.position + Camera.main.transform.forward * 0.5f, cameraRelativeMovement);
 
                 OnCubeCreate?.Invoke(destination);
+
+                }
                 isMouseDown = false;
         }
 
@@ -71,19 +76,47 @@ public class SwipeController : MonoBehaviour
 #else
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
         {
-            Debug.Log("condition1 OK");
-            startTouchPosition  = Input.GetTouch(0).position;
+            startTouchPosition = Input.mousePosition;
+            isMouseDown = true;
 
         }
 
          if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
         {
-            Debug.Log("condition2 OK");
-            endTouchPosition = Input.GetTouch(0).position;
-            direction = new Vector3(endTouchPosition.x - startTouchPosition.x, 0, endTouchPosition.y - startTouchPosition.y);
+           endTouchPosition = Input.mousePosition;
 
-            GameObject cube = Instantiate(cubePrefab, Camera.main.transform.position, Quaternion.identity);
-            cube.GetComponent<Rigidbody>().AddForce(direction, ForceMode.Impulse);
+            
+
+            //get player Input
+            float playerVerticalInput = (endTouchPosition.y - startTouchPosition.y )* throwForce;
+            float playerHorizontalInput = (endTouchPosition.x - startTouchPosition.x)* throwForce;
+
+            //get camera normalized directional vectors
+            Vector3 forward = Camera.main.transform.forward;
+            forward.y = 0;
+            Vector3 right = Camera.main.transform.right;
+
+            //create direction-relative-input vectors
+            Vector3 forwardRelativeVerticalInput = playerVerticalInput * forward;
+            Vector3 rigthRelativeHorizontalInput = playerHorizontalInput * right;
+
+            //create and apply camera relativeMovement
+            Vector3 cameraRelativeMovement = forwardRelativeVerticalInput + rigthRelativeHorizontalInput;
+
+
+
+            GameObject cube = Instantiate(cubePrefab, Camera.main.transform.position + Camera.main.transform.forward * 0.5f, Quaternion.identity);
+                Throw throwParameters = cube.GetComponent<Throw>();
+            throwParameters.ThrowObject(cameraRelativeMovement);
+                if (projectionPrediction.isActiveAndEnabled)
+                {
+
+                destination =  projectionPrediction.SimulateTrajectory(throwParameters, Camera.main.transform.position + Camera.main.transform.forward * 0.5f, cameraRelativeMovement);
+
+                OnCubeCreate?.Invoke(destination);
+
+                }
+                isMouseDown = false;
         }
 
 

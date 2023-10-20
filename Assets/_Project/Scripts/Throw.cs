@@ -5,9 +5,21 @@ using UnityEngine;
 public class Throw : MonoBehaviour
 {
 
+    Rigidbody rb;
+    [SerializeField]
+    bool applyTorque;
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
+
     public void ThrowObject(Vector3 _direction)
     {
-        gameObject.GetComponent<Rigidbody>().AddForce(_direction, ForceMode.Impulse);
+        rb.AddForce(_direction, ForceMode.Impulse);
+        if(applyTorque )
+        {
+            rb.AddTorque(Vector3.back);
+        }
     }
 
 }

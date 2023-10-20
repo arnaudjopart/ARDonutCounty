@@ -10,15 +10,20 @@ namespace Christophe.Fanchamps
 
 public class DestroyFallenObject : MonoBehaviour
 {
-
+        [SerializeField]
+        bool isSCaling;
         Transform m_hole;
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("Collision");
         Destroy(other.gameObject);
             m_hole = gameObject.transform.root;
+            if (isSCaling)
+            {
             DG.Tweening.Sequence mySequence = DOTween.Sequence();
             m_hole.DOScale(m_hole.localScale * 1.2f, 0.2f);
+
+            }
     }
 }
 }
