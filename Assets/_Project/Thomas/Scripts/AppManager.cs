@@ -20,10 +20,18 @@ namespace Thomas
         [SerializeField] private float m_doorMoveSpeed;
         [SerializeField] GameObject m_cubePrefab;
         [SerializeField] private Count m_nbrCubes;
+        [SerializeField] private Count m_score;
 
         public void Start()
         {
             m_nbrCubes.count = 0;
+            m_planeManager.planesChanged += SupressNewPlanes;
+        }
+
+        private void Update()
+        {
+            if (m_nbrCubes.count == 0 && m_door != null)
+                SpawnCubes(5);
         }
 
         public override void ProcessTouchDown(Vector2 _touchPosition)
@@ -38,6 +46,11 @@ namespace Thomas
                     m_doorPlane = m_planeManager.GetPlane(hit.trackableId);
                     Vector3 positionOfHit = hit.pose.position;
                     m_door = Instantiate(m_doorPrefab, positionOfHit, Quaternion.identity);
+                    foreach(ARPlane plane in m_planeManager.trackables)
+                    {
+                        if (plane.trackableId != m_doorPlane.trackableId && plane.center.y != m_doorPlane.center.y)
+                            plane.GetComponent<MeshCollider>().enabled = false;
+                    }
                 }
             }
         }
@@ -98,6 +111,21 @@ namespace Thomas
                         break;
                     }
                 }
+            }
+        }
+
+        private void SupressNewPlanes(ARPlanesChangedEventArgs args)
+        {
+            if (m_door == null) return;
+            foreach (ARPlane plane in args.added)
+            {
+                if (plane.center.y != m_doorPlane.center.y)
+                    plane.GetComponent<MeshCollider>().enabled = false;
+            }
+            foreach (ARPlane plane in args.updated)
+            {
+                if (plane.trackableId != m_doorPlane.trackableId && plane.center.y != m_doorPlane.center.y)
+                    plane.GetComponent<MeshCollider>().enabled = false;
             }
         }
 
