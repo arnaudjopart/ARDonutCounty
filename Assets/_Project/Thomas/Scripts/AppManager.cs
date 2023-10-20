@@ -22,6 +22,7 @@ namespace Thomas
         [SerializeField] private float m_doorMoveSpeed = 1;
         [SerializeField] private float m_heightMargin = 0.1f;
         [SerializeField] private float m_growingMultiplier = 1.2f;
+        [SerializeField] private int m_finalLevel = 10;
         [SerializeField] private Count m_nbrCubes;
         [SerializeField] private Count m_score;
         [SerializeField] private Count m_level;
@@ -46,13 +47,20 @@ namespace Thomas
                 m_scoreText.text = m_score.count.ToString();
                 if (m_score.count % (5 * ((m_level.count) * (m_level.count))) == 0)
                 {
-                    m_level.count++;
-                    m_levelText.text = "Level " + m_level.count.ToString();
-                    GrowDoor(m_growingMultiplier);
+                    if (m_level.count < m_finalLevel)
+                    {
+                        m_level.count++;
+                        m_levelText.text = "Level " + m_level.count.ToString();
+                        GrowDoor(m_growingMultiplier);
+                    }
+                    else
+                        Debug.Log("Bravo, vous avez gagné !");
                 }
             }
-            if (m_nbrCubes.count == 0 && m_door != null && score != 500)
+            if (m_nbrCubes.count == 0 && m_door != null && score < 5 * m_finalLevel * m_finalLevel)
+            {
                 SpawnCubes();
+            }
         }
 
         public override void ProcessTouchDown(Vector2 _touchPosition)
@@ -125,7 +133,7 @@ namespace Thomas
                             cube.GetComponent<Cube>().m_value = 1;
                             m_nbrCubes.count++;
 
-                            if (m_nbrCubes.count + m_score.count >= 500)
+                            if (m_nbrCubes.count + m_score.count >= 5 * m_finalLevel * m_finalLevel)
                                 break;
                         }
                     }
