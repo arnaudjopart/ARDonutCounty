@@ -16,10 +16,12 @@ namespace Thomas
         [SerializeField] private ARRaycastManager m_raycastManager;
         [SerializeField] private GameObject m_doorPrefab;
         private GameObject m_door;
-        private ARPlane m_doorPlane;
+        private float m_doorPlaneHeight;
+        [SerializeField] private float m_heightMargin = 0.1f;
         [SerializeField] private float m_doorMoveSpeed;
         [SerializeField] GameObject m_cubePrefab;
         [SerializeField] private Count m_nbrCubes;
+        [SerializeField] private int m_finalNbrCubesOnSpawn;
         [SerializeField] private Count m_score;
         [SerializeField] private Material m_transparentMaterial;
 
@@ -32,7 +34,7 @@ namespace Thomas
         private void Update()
         {
             if (m_nbrCubes.count == 0 && m_door != null)
-                SpawnCubes(5);
+                SpawnCubes();
         }
 
         public override void ProcessTouchDown(Vector2 _touchPosition)
@@ -42,13 +44,12 @@ namespace Thomas
             if (m_raycastManager.Raycast(_touchPosition, listOfHits, TrackableType.PlaneWithinPolygon) && m_planeManager.GetPlane(listOfHits[0].trackableId).alignment.IsHorizontal())
             {
                 ARRaycastHit hit = listOfHits[0];
-                m_doorPlane = m_planeManager.GetPlane(hit.trackableId);
-                m_doorPlane.boundaryChanged += UpdatePlane;
+                m_doorPlaneHeight = m_planeManager.GetPlane(hit.trackableId).transform.position.y;
                 Vector3 positionOfHit = hit.pose.position;
                 m_door = Instantiate(m_doorPrefab, positionOfHit, Quaternion.identity);
                 foreach (ARPlane plane in m_planeManager.trackables)
                 {
-                    if (plane.trackableId != m_doorPlane.trackableId && plane.center.y != m_doorPlane.center.y)
+                    if (PlaneIsInvalid(plane))
                         DeactivatePlane(plane);
                 }
             }
@@ -60,27 +61,32 @@ namespace Thomas
                 List<ARRaycastHit> listOfHits = new();
             if (m_raycastManager.Raycast(_touchPosition, listOfHits, TrackableType.PlaneWithinPolygon))
             {
-                ARRaycastHit hit = listOfHits[0];
-                Vector3 moveDirection = new(hit.pose.position.x - m_door.transform.position.x, 0, hit.pose.position.z - m_door.transform.position.z);
-                if (moveDirection.magnitude < m_doorMoveSpeed * Time.deltaTime)
-                    m_door.transform.Translate(moveDirection);
-                else
+                for (int i = 0; i < listOfHits.Count; i++)
                 {
-                    moveDirection = moveDirection.normalized;
-                    m_door.transform.Translate(moveDirection * m_doorMoveSpeed * Time.deltaTime);
+                    if (PlaneIsInvalid(m_planeManager.GetPlane(listOfHits[i].trackableId))) continue;
+                    ARRaycastHit hit = listOfHits[i];
+                    Vector3 moveDirection = new(hit.pose.position.x - m_door.transform.position.x, 0, hit.pose.position.z - m_door.transform.position.z);
+                    if (moveDirection.magnitude < m_doorMoveSpeed * Time.deltaTime)
+                        m_door.transform.Translate(moveDirection);
+                    else
+                    {
+                        moveDirection = moveDirection.normalized;
+                        m_door.transform.Translate(moveDirection * m_doorMoveSpeed * Time.deltaTime);
+                    }
+                    break;
                 }
             }
         }
 
-        public void SpawnCubes(int _expectedCubesNbr)
+        public void SpawnCubes()
         {
-            if (m_door != null && m_nbrCubes.count < _expectedCubesNbr)
+            if (m_door != null && m_nbrCubes.count < m_finalNbrCubesOnSpawn)
             {
                 Unity.Mathematics.Random rand = new(((uint)Time.time));
                 float distanceMin = 0.3f;
                 float distanceMax = 1;
                 int tries = 0;
-                while(m_nbrCubes.count < _expectedCubesNbr)
+                while(m_nbrCubes.count < m_finalNbrCubesOnSpawn)
                 {
                     float distanceX = rand.NextFloat(distanceMin, distanceMax);
                     int exposant = rand.NextInt(0, 2);
@@ -90,12 +96,12 @@ namespace Thomas
                     exposant = rand.NextInt(0, 2);
                     if (exposant == 1)
                         distanceZ = -distanceZ;
-                    Vector3 origin = new(m_door.transform.position.x - distanceX, m_doorPlane.center.y + 1, m_door.transform.position.z - distanceZ);
-                    if (Physics.Raycast(origin, -m_doorPlane.normal, out RaycastHit hit))
+                    Vector3 origin = new(m_door.transform.position.x - distanceX, m_doorPlaneHeight + 1, m_door.transform.position.z - distanceZ);
+                    if (Physics.Raycast(origin, -Vector3.up, out RaycastHit hit))
                     {
-                        if (hit.collider.TryGetComponent(out ARPlane foundPlane) && foundPlane.trackableId == m_doorPlane.trackableId)
+                        if (hit.collider.TryGetComponent(out ARPlane plane) && !PlaneIsInvalid(plane))
                         {
-                                Vector3 cubePosition = hit.point + m_doorPlane.normal;
+                                Vector3 cubePosition = hit.point + Vector3.up;
                                 Instantiate(m_cubePrefab, cubePosition, Quaternion.Euler(0, 0, 0));
                                 m_nbrCubes.count++;
                         }
@@ -115,26 +121,25 @@ namespace Thomas
             if (m_door == null) return;
             foreach (ARPlane plane in args.added)
             {
-                if (plane.center.y != m_doorPlane.center.y)
+                if (PlaneIsInvalid(plane))
                     DeactivatePlane(plane);
             }
             foreach (ARPlane plane in args.updated)
             {
-                if (plane.trackableId != m_doorPlane.trackableId && plane.center.y != m_doorPlane.center.y)
+                if (PlaneIsInvalid(plane))
                     DeactivatePlane(plane);
             }
         }
 
-        private void UpdatePlane(ARPlaneBoundaryChangedEventArgs args)
+        private bool PlaneIsInvalid(ARPlane plane)
         {
-            m_doorPlane = args.plane;
-            Debug.Log("Tout va bien");  
+            return (plane.transform.position.y < m_doorPlaneHeight - m_heightMargin || plane.transform.position.y > m_doorPlaneHeight + m_heightMargin);
         }
 
         private void DeactivatePlane(ARPlane plane)
         {
             plane.GetComponent<MeshCollider>().enabled = false;
-            //plane.GetComponent<MeshRenderer>().material = m_transparentMaterial;
+            //plane.GetComponent<MeshRenderer>().
         }
 
         private bool IsClickingOnUIElement()
