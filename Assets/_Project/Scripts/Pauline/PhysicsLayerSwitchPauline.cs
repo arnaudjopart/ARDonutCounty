@@ -1,3 +1,4 @@
+using DG.Tweening;
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ public class PhysicsLayerSwitchPauline : MonoBehaviour
     {
         if(m_cubesEaten >= 5)
         {
-            m_doorTransform.localScale *= 1.2f;
+            m_doorTransform.DOScale(m_doorTransform.localScale * 1.05f, 0.5f).SetEase(Ease.OutBounce);
 
             Debug.Log("Yay you grew up");
             m_cubesEaten = 0;
