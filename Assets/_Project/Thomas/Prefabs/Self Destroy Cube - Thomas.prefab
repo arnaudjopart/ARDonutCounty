@@ -94,7 +94,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3df86575e78c7b349be9980946a5c1b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nbrCubes: {fileID: 11400000, guid: 7991cfcfbe47c6540ae72c367390f1cb, type: 2}
 --- !u!114 &6162324926375688229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,4 +107,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_score: {fileID: 11400000, guid: db682dfece2968d46b370510d20fe69a, type: 2}
+  m_nbrCubes: {fileID: 11400000, guid: 7991cfcfbe47c6540ae72c367390f1cb, type: 2}
   m_value: 0
