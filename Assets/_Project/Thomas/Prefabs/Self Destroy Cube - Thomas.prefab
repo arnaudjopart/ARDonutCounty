@@ -108,4 +108,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_score: {fileID: 11400000, guid: db682dfece2968d46b370510d20fe69a, type: 2}
   m_nbrCubes: {fileID: 11400000, guid: 7991cfcfbe47c6540ae72c367390f1cb, type: 2}
+  m_totalValueOfCurrentCubes: {fileID: 11400000, guid: 46348aa9f61e3934e9d702e6327ef312,
+    type: 2}
   m_value: 0

@@ -21,11 +21,12 @@ namespace Thomas
         private float m_doorPlaneHeight;
         [SerializeField] private float m_doorMoveSpeed = 1;
         [SerializeField] private float m_heightMargin = 0.1f;
-        [SerializeField] private float m_growingMultiplier = 1.2f;
+        [SerializeField] private float m_sizeIncrease = 1.2f;
         [SerializeField] private int m_finalLevel = 10;
         [SerializeField] private Count m_nbrCubes;
         [SerializeField] private Count m_score;
         [SerializeField] private Count m_level;
+        [SerializeField] private Count m_totalValueOfCurrentCubes;
         [SerializeField] private Material m_transparentMaterial;
         [SerializeField] private TMP_Text m_scoreText;
         [SerializeField] private TMP_Text m_levelText;
@@ -37,6 +38,7 @@ namespace Thomas
             m_scoreText.text = m_score.count.ToString();
             m_level.count = 1;
             m_levelText.text = "Level " + m_level.count.ToString();
+            m_totalValueOfCurrentCubes.count = 0;
             m_planeManager.planesChanged += SupressNewPlanes;
         }
 
@@ -45,13 +47,13 @@ namespace Thomas
             if (int.TryParse(m_scoreText.text, out int score) && score != m_score.count)
             {
                 m_scoreText.text = m_score.count.ToString();
-                if (m_score.count % (5 * ((m_level.count) * (m_level.count))) == 0)
+                if (m_score.count >= 5 * m_level.count * m_level.count)
                 {
                     if (m_level.count < m_finalLevel)
                     {
                         m_level.count++;
                         m_levelText.text = "Level " + m_level.count.ToString();
-                        GrowDoor(m_growingMultiplier);
+                        GrowDoor(m_sizeIncrease);
                     }
                     else
                         Debug.Log("Bravo, vous avez gagné !");
@@ -106,50 +108,83 @@ namespace Thomas
 
         public void SpawnCubes()
         {
-            DetermineAmoutOfCubesToSpawn(out int amountSmallCubes);
-            if (m_door != null && m_nbrCubes.count < amountSmallCubes)
+            DetermineAmoutOfCubesToSpawn(out int amountSmallCubes, out int amountLargeCubes);
+            if (m_door != null && m_nbrCubes.count < amountSmallCubes + amountLargeCubes)
             {
                 Unity.Mathematics.Random rand = new(((uint)Time.time));
-                float distanceMin = 0.3f;
-                float distanceMax = 0.5f * m_level.count;
+                //float distanceMin = 0.3f;
+                float distanceMax = 0.3f + (0.2f * m_level.count);
                 int tries = 0;
                 while(m_nbrCubes.count < amountSmallCubes)
                 {
-                    float distanceX = rand.NextFloat(distanceMin, distanceMax);
-                    int exposant = rand.NextInt(0, 2);
-                    if (exposant == 1)
-                        distanceX = -distanceX;
-                    float distanceZ = rand.NextFloat(distanceMin, distanceMax);
-                    exposant = rand.NextInt(0, 2);
-                    if (exposant == 1)
-                        distanceZ = -distanceZ;
+                    if (m_totalValueOfCurrentCubes.count + m_score.count >= 5 * m_finalLevel * m_finalLevel)
+                        break;
+                    float distanceX = rand.NextFloat(-distanceMax, distanceMax);
+                    //int exposant = rand.NextInt(0, 2);
+                    //if (exposant == 1)
+                    //    distanceX = -distanceX;
+                    float distanceZ = rand.NextFloat(-distanceMax, distanceMax);
+                    //exposant = rand.NextInt(0, 2);
+                    //if (exposant == 1)
+                    //    distanceZ = -distanceZ;
                     Vector3 origin = new(m_door.transform.position.x - distanceX, m_doorPlaneHeight + 1, m_door.transform.position.z - distanceZ);
-                    if (Physics.Raycast(origin, -Vector3.up, out RaycastHit hit))
+                    if (Physics.Raycast(origin, -Vector3.up, out RaycastHit hit) && hit.collider.TryGetComponent(out ARPlane plane) && !PlaneIsInvalid(plane))
                     {
-                        if (hit.collider.TryGetComponent(out ARPlane plane) && !PlaneIsInvalid(plane))
+                        Vector3 cubePosition = hit.point + Vector3.up;
+                        GameObject cube = Instantiate(m_cubePrefab, cubePosition, Quaternion.Euler(0, 0, 0));
+                        cube.GetComponent<Cube>().m_value = 1;
+                        m_nbrCubes.count++;
+                        m_totalValueOfCurrentCubes.count += cube.GetComponent<Cube>().m_value;
+                    }
+                    else
+                    {
+                        tries++;
+                        if (tries == 1000)
                         {
-                            Vector3 cubePosition = hit.point + Vector3.up;
-                            GameObject cube = Instantiate(m_cubePrefab, cubePosition, Quaternion.Euler(0, 0, 0));
-                            cube.GetComponent<Cube>().m_value = 1;
-                            m_nbrCubes.count++;
-
-                            if (m_nbrCubes.count + m_score.count >= 5 * m_finalLevel * m_finalLevel)
-                                break;
+                            Debug.Log("Echec - Small");
+                            break;
                         }
                     }
-                    tries++;
-                    if (tries == 100)
-                    {
-                        Debug.Log("Echec");
+                }
+                while(m_nbrCubes.count < amountSmallCubes + amountLargeCubes)
+                {
+                    if (m_totalValueOfCurrentCubes.count + m_score.count >= (5 * m_finalLevel * m_finalLevel) - 1)
                         break;
+                    float distanceX = rand.NextFloat(-distanceMax, distanceMax);
+                    //int exposant = rand.NextInt(0, 2);
+                    //if (exposant == 1)
+                    //    distanceX = -distanceX;
+                    float distanceZ = rand.NextFloat(-distanceMax, distanceMax);
+                    //exposant = rand.NextInt(0, 2);
+                    //if (exposant == 1)
+                    //    distanceZ = -distanceZ;
+                    Vector3 origin = new(m_door.transform.position.x - distanceX, m_doorPlaneHeight + 1, m_door.transform.position.z - distanceZ);
+                    if (Physics.Raycast(origin, -Vector3.up, out RaycastHit hit) && hit.collider.TryGetComponent(out ARPlane plane) && !PlaneIsInvalid(plane))
+                    {
+                        Vector3 cubePosition = hit.point + Vector3.up;
+                        GameObject cube = Instantiate(m_cubePrefab, cubePosition, Quaternion.Euler(0, 0, 0));
+                        cube.GetComponent<Cube>().m_value = 2;
+                        cube.transform.localScale *= 2;
+                        m_nbrCubes.count++;
+                        m_totalValueOfCurrentCubes.count += cube.GetComponent<Cube>().m_value;
+                    }
+                    else
+                    {
+                        tries++;
+                        if (tries == 1000)
+                        {
+                            Debug.Log("Echec - Large");
+                            break;
+                        }
                     }
                 }
             }
         }
 
-        public void DetermineAmoutOfCubesToSpawn(out int _amountSmallCubes)
+        public void DetermineAmoutOfCubesToSpawn(out int _amountSmallCubes, out int _amountLargeCubes)
         {
-            _amountSmallCubes = m_level.count * 5;
+            _amountSmallCubes = (m_level.count % 5) * 5;
+            _amountLargeCubes = (m_level.count / 5) * 5;
         }
 
         private void SupressNewPlanes(ARPlanesChangedEventArgs args)
