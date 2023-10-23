@@ -16,7 +16,7 @@ namespace Thomas
         [SerializeField] private ARPlaneManager m_planeManager;
         [SerializeField] private ARRaycastManager m_raycastManager;
         [SerializeField] private GameObject m_doorPrefab;
-        [SerializeField] GameObject m_cubePrefab;
+        [SerializeField] private GameObject m_cubePrefab;
         private GameObject m_door;
         private float m_doorPlaneHeight;
         [SerializeField] private float m_doorMoveSpeed = 1;
