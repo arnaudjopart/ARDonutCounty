@@ -286,6 +286,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0064b86cb20bef34c9a343b04b4c996e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_xROrigin: {fileID: 1868714095}
+  m_aRSession: {fileID: 1250339979}
   m_planeManager: {fileID: 1868714100}
   m_raycastManager: {fileID: 1868714099}
   m_doorPrefab: {fileID: 2986873215845392448, guid: 1fb6b441ef1a5ea40bf2bdad77875d16,

@@ -6,8 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Project/_Scenes/ThomasScene.unity
+    path: Assets/_Project/Thomas/Scene/ThomasScene.unity
     guid: a0cf5e5c17da3504c8362185d74292e0
+  - enabled: 0
+    path: Assets/_Project/Thomas/Scene/ThomasTest.unity
+    guid: 4a4e8eb00c3345b469b4daa622925001
   m_configObjects:
     Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: 744b813df90924c169af73489b8325de,
       type: 2}
